@@ -1,0 +1,1558 @@
+/* ProfileView.module.css — CSS vars only, dark + light */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "DM Sans", sans-serif;
+}
+.main {
+  flex: 1;
+  max-width: 1060px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px 80px;
+}
+
+/* ══ HERO ══════════════════════════════════════════════════════════════════ */
+.hero {
+  padding: 88px 0 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.heroBlob {
+  position: absolute;
+  top: 30px;
+  left: -100px;
+  width: 600px;
+  height: 220px;
+  background: radial-gradient(
+    ellipse at 25% 50%,
+    var(--accent-soft) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.heroRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.avWrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.avImg {
+  border-radius: 18px;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--border);
+}
+.avCircle {
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  color: #fff;
+  border: 2px solid var(--border);
+}
+.onlineDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 3px solid var(--bg);
+}
+.heroMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.heroName {
+  font-family: "Syne", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+}
+.heroSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+.heroDot {
+  color: var(--text-secondary);
+  opacity: 0.4;
+}
+
+.bioWrap {
+  max-width: 480px;
+}
+.bioText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.bioTextExpanded {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+.bioToggle {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 2px;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.bioToggle:hover {
+  opacity: 0.7;
+}
+
+.kpisRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.kpi {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  box-shadow: var(--shadow-card);
+}
+.kpiVal {
+  font-family: "Syne", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.kpiLbl {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.kpiGreen {
+  border-color: color-mix(in srgb, var(--green) 30%, transparent);
+  background: var(--green-soft);
+}
+.kpiGreenTxt {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ══ TABS ══════════════════════════════════════════════════════════════════ */
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.tab {
+  padding: 13px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+.tab:hover {
+  color: var(--text-primary);
+}
+.tabOn {
+  color: var(--accent-text) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* ══ LAYOUT ════════════════════════════════════════════════════════════════ */
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+/* leftCol stretches so security card can fill remaining space */
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cardFull {
+  grid-column: 1 / -1;
+}
+/* security card grows to fill whatever leftCol space remains after personal info */
+.cardSecurity {
+  flex: 1;
+}
+
+/* ══ CARD ══════════════════════════════════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+}
+.cardLbl {
+  font-family: "Syne", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cardLblSm {
+  font-family: "Syne", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.cardHeadRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cardHeadRow .cardLbl {
+  margin: 0;
+}
+.cardMeta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.viewAll {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  transition: opacity 0.15s;
+}
+.viewAll:hover {
+  opacity: 0.7;
+}
+
+/* ══ FIELDS ════════════════════════════════════════════════════════════════ */
+.field {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.field:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.fLabel {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+.fView {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.fVal {
+  font-size: 13px;
+  color: var(--text-primary);
+  flex: 1;
+  line-height: 1.45;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.fEmpty {
+  font-size: 13px;
+  color: var(--text-secondary);
+  flex: 1;
+  font-style: italic;
+}
+.readOnly {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fEditBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.12s;
+}
+.fEditBtn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+.fEdit {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.fInput {
+  background: var(--surface-hover);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: "DM Sans", sans-serif;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.fInput:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.fBtns {
+  display: flex;
+  gap: 6px;
+}
+.fSave {
+  padding: 5px 11px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+}
+.fSave:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.fCancel {
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+}
+.fCancel:hover {
+  color: var(--text-primary);
+}
+
+/* ══ SECURITY ══════════════════════════════════════════════════════════════ */
+.secActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.secBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+  min-height: 64px;
+  padding: 16px 14px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+}
+.secBtn:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+.secBtnDanger:hover {
+  border-color: var(--red-soft) !important;
+  background: color-mix(in srgb, var(--red) 6%, transparent) !important;
+}
+.secBtnDanger:hover .secBtnTitle {
+  color: var(--red) !important;
+}
+.secBtnText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.secBtnTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: "DM Sans", sans-serif;
+}
+.secBtnSub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ══ CHARTS ════════════════════════════════════════════════════════════════ */
+.chartWrap {
+  margin-top: 4px;
+}
+
+/* chart legend row */
+.chartLegendRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+.chartLegItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* mini stats below chart */
+.chartStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 10px;
+  padding-top: 2px;
+}
+.chartStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 4px;
+  text-align: center;
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.chartStat:nth-child(3n) {
+  border-right: none;
+}
+.chartStat:nth-last-child(-n + 3) {
+  border-bottom: none;
+}
+.chartStatVal {
+  font-family: "Syne", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.chartStatLbl {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.tip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  box-shadow: var(--shadow-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tipLabel {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.tipVal {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ══ ACTIVITY CALENDAR ═════════════════════════════════════════════════════ */
+/* The calendar uses a CSS-grid approach so months + cells stay aligned */
+.calOuter {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+/* wrapper that makes day-labels + grid scroll together */
+.calScroll {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+/* month label row — one span per week-column */
+.calMonthRow {
+  display: flex;
+  /* left offset = width of day-label column */
+  padding-left: 26px;
+  margin-bottom: 3px;
+  gap: 0;
+}
+/* each month span covers exactly N week-columns wide */
+.calMonthSpan {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+  overflow: hidden;
+  /* width is set inline as (cols × (cell+gap)) */
+}
+
+/* grid row = day-labels + week-columns side by side */
+.calBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+/* day-of-week label column */
+.calDayNames {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+  width: 24px;
+  margin-right: 2px;
+  padding-top: 1px;
+}
+.calDayName {
+  font-size: 9px;
+  color: var(--text-secondary);
+  height: 12px;
+  line-height: 12px;
+  text-align: right;
+  padding-right: 3px;
+}
+
+/* one column per week */
+.calWeekCols {
+  display: flex;
+  gap: 3px;
+}
+.calDayCol {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* individual cell */
+.calCell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  cursor: default;
+  transition: opacity 0.1s;
+}
+.calCell:hover {
+  opacity: 0.72;
+}
+
+.calL0 {
+  background: var(--border);
+}
+.calL1 {
+  background: color-mix(in srgb, #6c63ff 28%, var(--surface));
+}
+.calL2 {
+  background: color-mix(in srgb, #6c63ff 56%, var(--surface));
+}
+.calL3 {
+  background: #6c63ff;
+}
+.calSched {
+  background: color-mix(in srgb, #a78bfa 40%, var(--surface));
+}
+.calToday {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+.calLegend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.calLegendTxt {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.calLegendSep {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin: 0 4px;
+}
+
+.calCourses {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.calCourseRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-subtle);
+}
+.calCourseThumb {
+  width: 36px;
+  height: 24px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.calCourseInfo {
+  flex: 1;
+  min-width: 0;
+}
+.calCourseTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.calCourseSub {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.calCourseBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ══ ACHIEVEMENTS ══════════════════════════════════════════════════════════ */
+.achRow {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 8px;
+}
+.ach {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 11px 4px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  position: relative;
+  cursor: default;
+  transition: all 0.15s;
+}
+.achOn {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.achOn:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.achIco {
+  font-size: 17px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  transition: color 0.15s;
+}
+.achIcoOn {
+  color: var(--accent-text);
+}
+.achLbl {
+  font-size: 8px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+.achTick {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+/* ══ STREAK ════════════════════════════════════════════════════════════════ */
+.streakBody {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.streakNums {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+.streakNum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 20px;
+  text-align: center;
+}
+.streakNum:first-child {
+  padding-left: 0;
+}
+.streakDiv {
+  width: 1px;
+  height: 44px;
+  background: var(--border);
+}
+.streakBig {
+  font-family: "Syne", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.streakSub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.dotRow {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+.dotItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.dotDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.dotOn {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.dotLbl {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+/* ══ ENROLLED COURSES ══════════════════════════════════════════════════════ */
+.cList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cRow:hover {
+  border-color: var(--border-active);
+  background: var(--accent-soft);
+}
+.cThumb {
+  width: 42px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.cInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.cTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cBy {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.cBarWrap {
+  flex-shrink: 0;
+  width: 72px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.cBarFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+}
+.cPct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  width: 28px;
+  text-align: right;
+}
+
+/* ══ SECTION ═══════════════════════════════════════════════════════════════ */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ══ COINS ═════════════════════════════════════════════════════════════════ */
+.coinsTop {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.coinsCard {
+  flex: 1;
+  min-width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: var(--shadow-card);
+}
+.coinsVal {
+  font-family: "Syne", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.coinsLbl {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.txList {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.txRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 15px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.1s;
+}
+.txRow:last-child {
+  border-bottom: none;
+}
+.txRow:hover {
+  background: var(--surface-hover);
+}
+.txIco {
+  font-size: 15px;
+  flex-shrink: 0;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.txLbl {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.txDate {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.txAmt {
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: right;
+}
+.txPos {
+  color: var(--text-primary);
+}
+.txNeg {
+  color: var(--red);
+}
+
+/* ══ LEADERBOARD ═══════════════════════════════════════════════════════════ */
+.lbTop {
+  margin-bottom: 8px;
+}
+.lbTitle {
+  font-family: "Syne", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+.lbSub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+.lbList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lbRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 15px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.12s;
+}
+.lbRow:hover {
+  border-color: color-mix(in srgb, var(--border) 40%, var(--accent) 60%);
+}
+.lbMe {
+  border-color: var(--accent-border) !important;
+  background: var(--accent-soft) !important;
+}
+.lbMedal {
+  width: 26px;
+  text-align: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.lbRank {
+  font-family: "Syne", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.lbAv {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Syne", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.lbAvImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.lbInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.lbName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.youTag {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  padding: 1px 6px;
+  border-radius: 100px;
+}
+.lbBal {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.lbRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.lbTot {
+  font-family: "Syne", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.lbTotLbl {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+/* ══ EMPTY ═════════════════════════════════════════════════════════════════ */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+.empty p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ══ DELETE MODAL ══════════════════════════════════════════════════════════ */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideUp 0.18s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.modalIco {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--red) 10%, transparent);
+  border: 1px solid var(--red-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+.modalTitle {
+  font-family: "Syne", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+.modalText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+.modalConfirmLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+.modalInput {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 9px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: "DM Sans", sans-serif;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.modalInput:focus {
+  border-color: var(--red-soft);
+}
+.modalBtns {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.modalCancel {
+  flex: 1;
+  padding: 9px;
+  border-radius: 9px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.modalCancel:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+.modalDanger {
+  flex: 2;
+  padding: 9px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--red) 12%, transparent);
+  border: 1px solid var(--red-soft);
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.12s;
+}
+.modalDanger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--red) 18%, transparent);
+}
+.modalDanger:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ══ RESPONSIVE ════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .achRow {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .heroRow {
+    flex-wrap: wrap;
+  }
+  .kpisRow {
+    gap: 4px;
+  }
+  .achRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .chartStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .coinsTop {
+    flex-direction: column;
+  }
+  .tab {
+    font-size: 12px;
+    padding: 11px 10px;
+  }
+  .streakBody {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .dotRow {
+    justify-content: flex-start;
+  }
+}
+
+/* ══ CALENDAR + RADAR GRID ═════════════════════════════════════════════════ */
+.calRadarGrid {
+  display: grid;
+  grid-template-columns: 1fr auto 280px;
+  align-items: start;
+}
+.calSide {
+  min-width: 0;
+}
+.calDivider {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 0 24px;
+}
+.radarSide {
+  display: flex;
+  flex-direction: column;
+}
+
+.skillBars {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 6px;
+}
+.skillRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.skillLbl {
+  font-size: 10px;
+  color: var(--text-secondary);
+  width: 52px;
+  flex-shrink: 0;
+}
+.skillTrack {
+  flex: 1;
+  height: 5px;
+  border-radius: 100px;
+  background: var(--border);
+  overflow: hidden;
+}
+.skillFill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #6c63ff, #a78bfa);
+  transition: width 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.skillPct {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+@media (max-width: 860px) {
+  .calRadarGrid {
+    grid-template-columns: 1fr;
+  }
+  .calDivider {
+    width: auto;
+    height: 1px;
+    margin: 20px 0;
+  }
+}
+
+/* ══ ACHIEVEMENTS LAYOUT ════════════════════════════════════════════════════ */
+.achLayout {
+  display: grid;
+  grid-template-columns: 1fr auto 240px;
+  align-items: start;
+  gap: 0;
+}
+.achLeft {
+  min-width: 0;
+}
+.achDivider {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 0 24px;
+}
+.achRight {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* LOCKED badge — clearly disabled but readable */
+.achOff {
+  background: var(--surface-hover) !important;
+  border-color: var(--border) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+/* lock icon: visible but muted */
+.achOff .achIco {
+  color: var(--text-tertiary) !important;
+  opacity: 1;
+}
+/* label: dimmer */
+.achOff .achLbl {
+  color: var(--text-tertiary) !important;
+  opacity: 1;
+}
+/* lock icon gets a subtle background to show it's locked */
+.achOff {
+  position: relative;
+}
+.achOff::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(128, 128, 128, 0.04) 4px,
+    rgba(128, 128, 128, 0.04) 5px
+  );
+  pointer-events: none;
+}
+
+/* donut ring */
+.achProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.achDonutWrap {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+}
+.achDonutWrap svg {
+  display: block;
+}
+.achDonutLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.achDonutPct {
+  font-family: "Syne", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.achDonutSub {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.achSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.achSumRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.achSumVal {
+  font-family: "Syne", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 22px;
+}
+.achSumLbl {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.achNext {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+}
+.achNextLbl {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 6px;
+}
+.achNextItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.achNextIco {
+  font-size: 14px;
+  color: var(--accent-text);
+}
+.achNextName {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+@media (max-width: 860px) {
+  .achLayout {
+    grid-template-columns: 1fr;
+  }
+  .achDivider {
+    width: auto;
+    height: 1px;
+    margin: 20px 0;
+  }
+  .achRight {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}

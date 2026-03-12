@@ -1,0 +1,113 @@
+.root {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0 80px;
+}
+
+.inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 24px;
+  position: relative;
+  transition: background 0.2s;
+  cursor: default;
+}
+
+.item:hover {
+  background: rgba(108, 99, 255, 0.04);
+}
+
+.value {
+  font-family: "Syne", sans-serif;
+  font-size: clamp(28px, 2.5vw, 42px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -1.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.item:hover .value {
+  background: linear-gradient(135deg, #6c63ff, #ff6584);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.textCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.sep {
+  position: absolute;
+  right: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 1px;
+  background: var(--border);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1400px) {
+  .root {
+    padding: 0 60px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .root {
+    padding: 0 40px;
+  }
+  .item {
+    gap: 12px;
+    padding: 28px 16px;
+  }
+}
+
+@media (max-width: 860px) {
+  .inner {
+    flex-wrap: wrap;
+  }
+  .item {
+    flex: 1 1 45%;
+    border-bottom: 1px solid var(--border);
+  }
+  .sep {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .root {
+    padding: 0 20px;
+  }
+  .item {
+    flex: 1 1 100%;
+  }
+}

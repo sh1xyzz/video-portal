@@ -1,0 +1,124 @@
+/* themes.css
+   Подключить в main.jsx/index.css один раз:
+   import "@/shared/styles/themes.css";
+   
+   Тема управляется атрибутом data-theme="dark"|"light" на <html>.
+   По умолчанию тёмная.
+*/
+
+/* ════════════════════════════════════════
+   ТЁМНАЯ ТЕМА (default)
+   ════════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+  /* Фоны */
+  --bg: #09090f;
+  --surface: #111118;
+  --surface-2: #16161f;
+  --surface-hover: rgba(255, 255, 255, 0.04);
+
+  /* Границы */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-active: rgba(108, 99, 255, 0.28);
+
+  /* Текст */
+  --text-primary: rgba(255, 255, 255, 0.88);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --text-tertiary: rgba(255, 255, 255, 0.22);
+  --text-muted: rgba(255, 255, 255, 0.12);
+
+  /* Акценты */
+  --accent: #6c63ff;
+  --accent-soft: rgba(108, 99, 255, 0.12);
+  --accent-border: rgba(108, 99, 255, 0.22);
+  --accent-text: #a89eff;
+
+  /* Статус */
+  --green: #34d399;
+  --green-soft: rgba(52, 211, 153, 0.1);
+  --red: #f87171;
+  --red-soft: rgba(248, 113, 113, 0.08);
+  --amber: #f59e0b;
+  --amber-soft: rgba(245, 158, 11, 0.08);
+
+  /* Тени */
+  --shadow-dropdown: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+  /* Скроллбар */
+  color-scheme: dark;
+}
+
+/* ════════════════════════════════════════
+   СВЕТЛАЯ ТЕМА
+   ════════════════════════════════════════ */
+[data-theme="light"] {
+  /* Фоны */
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #f0f0f4;
+  --surface-hover: rgba(0, 0, 0, 0.03);
+
+  /* Границы */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-active: rgba(108, 99, 255, 0.3);
+
+  /* Текст */
+  --text-primary: rgba(0, 0, 0, 0.85);
+  --text-secondary: rgba(0, 0, 0, 0.45);
+  --text-tertiary: rgba(0, 0, 0, 0.28);
+  --text-muted: rgba(0, 0, 0, 0.14);
+
+  /* Акценты */
+  --accent: #6c63ff;
+  --accent-soft: rgba(108, 99, 255, 0.08);
+  --accent-border: rgba(108, 99, 255, 0.2);
+  --accent-text: #5b52e0;
+
+  /* Статус */
+  --green: #059669;
+  --green-soft: rgba(5, 150, 105, 0.08);
+  --red: #dc2626;
+  --red-soft: rgba(220, 38, 38, 0.06);
+  --amber: #d97706;
+  --amber-soft: rgba(217, 119, 6, 0.07);
+
+  /* Тени */
+  --shadow-dropdown:
+    0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.07);
+
+  color-scheme: light;
+}
+
+/* ── Базовые стили ────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  margin: 0;
+  transition:
+    background 0.25s ease,
+    color 0.2s ease;
+}
+
+/* Плавный переход всех поверхностей */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Но не для анимаций */
+[class*="animation"],
+[class*="animate"],
+[style*="animation"] {
+  transition: none !important;
+}

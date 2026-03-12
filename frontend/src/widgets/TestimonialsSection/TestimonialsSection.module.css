@@ -1,0 +1,294 @@
+/* TestimonialsSection.module.css */
+
+.root {
+  padding: 0 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.head {
+  text-align: center;
+  padding: 0 80px;
+  margin-bottom: 56px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: "Syne", sans-serif;
+  font-size: clamp(28px, 2.8vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.sub {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+/* ── Marquee обёртка (позиционирует fade поверх) ─────────────────────────── */
+
+.marqueeWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* overflow скрыт на root, здесь курсор normal чтобы паузить */
+}
+
+/* ── Строка-полоса ───────────────────────────────────────────────────────── */
+
+.trackWrap {
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: scrollLeft 40s linear infinite;
+}
+
+/* Вторая строка едет вправо */
+.trackReverse {
+  animation-name: scrollRight;
+  animation-duration: 44s; /* чуть другая скорость — живее */
+}
+
+/* Пауза при наведении на любую строку */
+.trackWrap:hover .track {
+  animation-play-state: paused;
+}
+
+@keyframes scrollLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+
+.card {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition:
+    border-color 0.25s,
+    transform 0.25s,
+    box-shadow 0.25s;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(108, 99, 255, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stars {
+  font-size: 12px !important;
+  /* звёзды всегда жёлтые */
+  color: #fbbf24 !important;
+}
+
+/* Цветная полоска справа */
+.cardAccent {
+  width: 28px;
+  height: 4px;
+  border-radius: 100px;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.text {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--muted);
+  flex: 1;
+  /* Обрезаем слишком длинные отзывы */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Author ──────────────────────────────────────────────────────────────── */
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.authorName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.authorRole {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  margin-top: 2px;
+}
+
+/* ── Fade-маски по краям ─────────────────────────────────────────────────── */
+
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  /* начинаем после хедера секции */
+  top: 210px;
+  bottom: 0;
+  width: 180px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+}
+.fadeRight {
+  right: 0;
+  background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+}
+
+/* ── Skeleton ────────────────────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  from {
+    background-position: -400px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+.skeletonCard {
+  pointer-events: none;
+}
+
+.skeletonStars,
+.skeletonText,
+.skeletonLine,
+.skeletonAvatar {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--bg2, #1a1a2e) 50%,
+    var(--surface) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonStars {
+  height: 14px;
+  width: 90px;
+}
+.skeletonText {
+  height: 13px;
+  width: 100%;
+  margin: 2px 0;
+}
+.skeletonAuthor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.skeletonLine {
+  height: 12px;
+}
+
+/* ── Empty / Error ───────────────────────────────────────────────────────── */
+
+.emptyBox,
+.errorBox {
+  text-align: center;
+  padding: 48px 24px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.errorBox {
+  color: #f87171;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .head {
+    padding: 0 20px;
+    margin-bottom: 36px;
+  }
+  .card {
+    width: 280px;
+    padding: 18px;
+  }
+  .fadeLeft,
+  .fadeRight {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 250px;
+    gap: 10px;
+  }
+  .text {
+    -webkit-line-clamp: 3;
+  }
+  .fadeLeft,
+  .fadeRight {
+    width: 40px;
+  }
+}

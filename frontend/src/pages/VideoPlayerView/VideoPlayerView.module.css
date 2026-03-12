@@ -1,0 +1,588 @@
+/* ══════════════════════════════════════════
+   ROOT — жёсткий fullscreen, без скролла
+══════════════════════════════════════════ */
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* dynamic viewport height */
+  overflow: hidden;
+  background: #000;
+}
+
+/* ══════════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════════ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 52px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.backBtn:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.topbarDiv {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.topLogo {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.topMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topTitle {
+  font-family: "Syne", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topSub {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.markBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.markBtn:hover {
+  border-color: rgba(67, 233, 123, 0.4);
+  color: var(--accent3);
+}
+
+.markDone {
+  background: rgba(67, 233, 123, 0.12) !important;
+  border-color: rgba(67, 233, 123, 0.35) !important;
+  color: var(--accent3) !important;
+}
+
+.menuBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menuBtn:hover {
+  border-color: rgba(108, 99, 255, 0.4);
+  color: var(--text);
+}
+
+/* ══════════════════════════════════════════
+   VIDEO — fills all remaining space
+══════════════════════════════════════════ */
+.videoWrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  animation: fadeIn 0.4s ease both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.8;
+  }
+}
+
+.dimOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    transparent 30%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Big play ── */
+.bigPlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.bigPlayIcon {
+  font-size: 72px;
+  color: rgba(255, 255, 255, 0.9);
+  filter: drop-shadow(0 0 24px rgba(108, 99, 255, 0.7));
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.bigPlay:hover .bigPlayIcon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* ── Controls overlay ── */
+.controlsWrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 0 20px 12px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* scrub */
+.scrubRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+.timeLabel:first-child {
+  text-align: left;
+}
+
+.scrubTrack {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  cursor: pointer;
+  position: relative;
+  transition: height 0.15s;
+}
+
+.scrubTrack:hover {
+  height: 6px;
+}
+
+.scrubFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  position: relative;
+  transition: width 0.1s;
+}
+
+.scrubThumb {
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.7);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.scrubTrack:hover .scrubThumb {
+  opacity: 1;
+}
+
+/* button row */
+.btnRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ctrlLeft,
+.ctrlRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ctrlCenter {
+  flex: 1;
+  text-align: center;
+}
+
+.ctrlTitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  display: inline-block;
+}
+
+.ctrlBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.ctrlBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.ctrlBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ctrlPlay {
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+}
+
+.ctrlTime {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 0 6px;
+}
+
+/* ══════════════════════════════════════════
+   BOTTOM — course progress
+══════════════════════════════════════════ */
+.bottom {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 10px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* chips */
+.chipsWrap {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chipsWrap::-webkit-scrollbar {
+  display: none;
+}
+
+.chips {
+  display: flex;
+  gap: 5px;
+  width: max-content;
+}
+
+.chip {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.chip:hover {
+  border-color: rgba(108, 99, 255, 0.4);
+  color: var(--text);
+}
+
+.chipActive {
+  border-color: var(--accent) !important;
+  background: rgba(108, 99, 255, 0.2) !important;
+  color: var(--accent) !important;
+  box-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
+}
+
+.chipDone {
+  background: rgba(67, 233, 123, 0.12) !important;
+  border-color: rgba(67, 233, 123, 0.3) !important;
+}
+
+.chipIcon {
+  font-size: 12px;
+  color: var(--accent3);
+}
+.chipNum {
+  line-height: 1;
+}
+
+/* progress bar */
+.bottomProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent3) 100%);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progressLabel {
+  font-size: 11px;
+  color: var(--muted);
+}
+.progressValue {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   DRAWER
+══════════════════════════════════════════ */
+.drawerTop {
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawerMeta {
+  font-size: 12px;
+  color: var(--accent3);
+  font-weight: 600;
+}
+
+.drawerSec {
+  padding: 16px 0 4px;
+}
+
+.drawerSecTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 18px 6px;
+}
+
+.drawerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  border-left: 2px solid transparent;
+}
+
+.drawerItem:hover {
+  background: rgba(108, 99, 255, 0.06);
+}
+
+.drawerItemActive {
+  background: rgba(108, 99, 255, 0.1) !important;
+  border-left-color: var(--accent) !important;
+}
+
+.drawerItemIcon {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.drawerNum {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.drawerItemBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerItemTitle {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drawerItemActive .drawerItemTitle {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.drawerItemDur {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .topTitle,
+  .topSub {
+    max-width: 160px;
+  }
+  .markBtn span,
+  .menuBtn span {
+    display: none;
+  }
+  .ctrlTitle {
+    display: none;
+  }
+  .bigPlayIcon {
+    font-size: 56px;
+  }
+}

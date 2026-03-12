@@ -1,0 +1,162 @@
+/* themes.css — полная версия
+   Подключить ОДИН РАЗ в main.jsx:
+   import "@/shared/styles/themes.css"
+   
+   Тема: data-theme="dark" | "light" на <html>
+*/
+
+/* ══════════════════════════════════════
+   ТЁМНАЯ (default)
+══════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+  /* ── Фоны ── */
+  --bg: #09090f;
+  --surface: #111118;
+  --surface-2: #16161f;
+  --surface-hover: rgba(255, 255, 255, 0.04);
+
+  /* ── Границы ── */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-active: rgba(108, 99, 255, 0.28);
+
+  /* ── Текст (новые имена) ── */
+  --text-primary: rgba(255, 255, 255, 0.88);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --text-tertiary: rgba(255, 255, 255, 0.22);
+  --text-muted: rgba(255, 255, 255, 0.12);
+
+  /* ── Текст (legacy — для старых компонентов) ── */
+  --text: rgba(255, 255, 255, 0.88);
+  --muted: rgba(255, 255, 255, 0.38);
+
+  /* ── Акценты ── */
+  --accent: #6c63ff;
+  --accent-soft: rgba(108, 99, 255, 0.1);
+  --accent-border: rgba(108, 99, 255, 0.22);
+  --accent-text: #a89eff;
+
+  /* ── Статус ── */
+  --green: #34d399;
+  --green-soft: rgba(52, 211, 153, 0.1);
+  --red: #f87171;
+  --red-soft: rgba(248, 113, 113, 0.08);
+  --amber: #f59e0b;
+  --amber-soft: rgba(245, 158, 11, 0.08);
+
+  /* ── Тени ── */
+  --shadow-dropdown: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+  color-scheme: dark;
+}
+
+/* ══════════════════════════════════════
+   СВЕТЛАЯ
+══════════════════════════════════════ */
+[data-theme="light"] {
+  /* ── Фоны ── */
+  --bg: #f4f4f8;
+  --surface: #ffffff;
+  --surface-2: #ebebf2;
+  --surface-hover: rgba(0, 0, 0, 0.03);
+
+  /* ── Границы ── */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-active: rgba(108, 99, 255, 0.3);
+
+  /* ── Текст (новые имена) ── */
+  --text-primary: rgba(0, 0, 0, 0.85);
+  --text-secondary: rgba(0, 0, 0, 0.5);
+  --text-tertiary: rgba(0, 0, 0, 0.3);
+  --text-muted: rgba(0, 0, 0, 0.18);
+
+  /* ── Текст (legacy) ── */
+  --text: rgba(0, 0, 0, 0.85);
+  --muted: rgba(0, 0, 0, 0.42);
+
+  /* ── Акценты ── */
+  --accent: #6c63ff;
+  --accent-soft: rgba(108, 99, 255, 0.08);
+  --accent-border: rgba(108, 99, 255, 0.2);
+  --accent-text: #5b52e0;
+
+  /* ── Статус ── */
+  --green: #059669;
+  --green-soft: rgba(5, 150, 105, 0.08);
+  --red: #dc2626;
+  --red-soft: rgba(220, 38, 38, 0.06);
+  --amber: #d97706;
+  --amber-soft: rgba(217, 119, 6, 0.07);
+
+  /* ── Тени ── */
+  --shadow-dropdown:
+    0 8px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  color-scheme: light;
+}
+
+/* ══════════════════════════════════════
+   BASE RESET
+══════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "DM Sans", sans-serif;
+}
+
+/* Плавный переход фонов и цветов при смене темы
+   НЕ применяем к анимированным элементам */
+body,
+header,
+nav,
+main,
+aside,
+footer,
+section,
+article,
+div[class],
+button[class],
+a[class] {
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.18s ease,
+    box-shadow 0.22s ease;
+}
+
+/* Скроллбар в тёмной теме */
+[data-theme="dark"] {
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+[data-theme="dark"]::-webkit-scrollbar {
+  width: 6px;
+}
+[data-theme="dark"]::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* Скроллбар в светлой теме */
+[data-theme="light"] {
+  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+}
+
+[data-theme="light"]::-webkit-scrollbar {
+  width: 6px;
+}
+[data-theme="light"]::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
