@@ -1,5 +1,6 @@
 // src/shared/store/useAuthStore.js
-// Zustand стор: регистрация / логин / логаут / fetchMe
+// ✅ user.role в ответе от сервера
+// ✅ Хелперы: isAdmin, isTeacher, isAssistant, isStudent
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -14,7 +15,8 @@ const useAuthStore = create(
       loading: false,
       error: null,
 
-      // ── Регистрация ────────────────────────────────────────────────────────
+      // ── Auth ───────────────────────────────────────────────────────────────
+
       register: async ({ name, email, password }) => {
         set({ loading: true, error: null });
         try {
@@ -25,7 +27,6 @@ const useAuthStore = create(
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Registration failed");
-
           set({ user: data.user, token: data.token, loading: false });
           return { ok: true };
         } catch (err) {
@@ -34,7 +35,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Логин ──────────────────────────────────────────────────────────────
       login: async ({ email, password }) => {
         set({ loading: true, error: null });
         try {
@@ -45,7 +45,6 @@ const useAuthStore = create(
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Invalid credentials");
-
           set({ user: data.user, token: data.token, loading: false });
           return { ok: true };
         } catch (err) {
@@ -54,7 +53,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Обновить профиль ───────────────────────────────────────────────────
       updateProfile: async (fields) => {
         const { token } = get();
         set({ loading: true, error: null });
@@ -69,7 +67,6 @@ const useAuthStore = create(
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Update failed");
-
           set({ user: data, loading: false });
           return { ok: true };
         } catch (err) {
@@ -78,7 +75,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Восстановить сессию при перезагрузке ───────────────────────────────
       fetchMe: async () => {
         const { token } = get();
         if (!token) return;
@@ -97,18 +93,45 @@ const useAuthStore = create(
         }
       },
 
-      // ── Логаут ─────────────────────────────────────────────────────────────
       logout: () => set({ user: null, token: null, error: null }),
-
       clearError: () => set({ error: null }),
+
+      // ── Role helpers (читают из state, не вызывают сервер) ────────────────
+
+      /**
+       * Текущая роль пользователя.
+       * "student" | "teacher" | "assistant" | "admin" | null
+       */
+      getRole: () => get().user?.role ?? null,
+
+      /** Администратор — полный доступ */
+      isAdmin: () => get().user?.role === "admin",
+
+      /** Учитель (или выше) — может создавать/редактировать свои курсы */
+      isTeacher: () => ["teacher", "admin"].includes(get().user?.role),
+
+      /** Ассистент (или выше) — может проверять задания */
+      isAssistant: () =>
+        ["assistant", "teacher", "admin"].includes(get().user?.role),
+
+      /** Студент — может записываться и проходить курсы */
+      isStudent: () => !!get().user, // все авторизованные могут учиться
+
+      /**
+       * Может ли текущий пользователь редактировать курс?
+       * course должен иметь поле ownerId.
+       */
+      canEditCourse: (course) => {
+        const { user } = get();
+        if (!user) return false;
+        if (user.role === "admin") return true;
+        if (user.role === "teacher") return course?.ownerId === user.id;
+        return false;
+      },
     }),
     {
-      name: "edustream-auth", // ключ в localStorage
-      partialize: (state) => ({
-        // сохраняем только token
-        token: state.token,
-        user: state.user,
-      }),
+      name: "edustream-auth",
+      partialize: (state) => ({ token: state.token, user: state.user }),
     },
   ),
 );
