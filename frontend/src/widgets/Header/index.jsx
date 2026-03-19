@@ -1,7 +1,7 @@
 // src/widgets/Header/Header.jsx
 
 import { useState, useEffect } from "react";
-import { useNavigate }          from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import AuthModal            from "@/widgets/AuthModal";
 import UserMenu             from "@/widgets/UserMenu";
 import { NotificationBell } from "@/widgets/UserMenu";
@@ -24,9 +24,12 @@ const Header = () => {
   const { user, fetchMe }    = useAuthStore();
   const { fetchAll, reset }  = useCoinsStore();
   const { init }             = useThemeStore();
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-  // Инициализируем тему при монтировании
+  const isAdmin   = user?.role === "admin";
+  const isTeacher = user?.role === "teacher" || user?.role === "admin";
+
   useEffect(() => { init(); }, []);
 
   useEffect(() => {
@@ -49,15 +52,38 @@ const Header = () => {
 
         <nav className={s.nav}>
           {NAV_LINKS.map(l => (
-            <button key={l.label} className={s.navLink} onClick={() => navigate(l.path)}>
+            <button
+              key={l.label}
+              className={`${s.navLink} ${location.pathname === l.path ? s.navLinkActive : ""}`}
+              onClick={() => navigate(l.path)}
+            >
               {l.label}
             </button>
           ))}
+
+          {/* Teacher badge */}
+          {isTeacher && !isAdmin && (
+            <button
+              className={s.teacherBtn}
+              onClick={() => navigate("/teacher")}
+            >
+              🎓 Teacher
+            </button>
+          )}
+
+          {/* Admin badge — только для admin */}
+          {isAdmin && (
+            <button
+              className={`${s.adminBtn} ${location.pathname === "/admin" ? s.adminBtnActive : ""}`}
+              onClick={() => navigate("/admin")}
+            >
+              ⚡ Admin
+            </button>
+          )}
         </nav>
 
         <div className={s.actions}>
           <ThemeToggle />
-
           {user ? (
             <>
               <NotificationBell />

@@ -11,11 +11,19 @@ from app.graphql.queries import Query
 from app.graphql.mutations import Mutation
 from app.auth.auth import decode_token
 from app.routers.auth_router  import router as auth_router
-from app.routers.coins_router import router as coins_router  # ← NEW
+from app.routers.coins_router import router as coins_router
 
-# Импортируем все модели
-from app.models import course, lesson, testimonial, user  # noqa
-from app.models import coins  # noqa  ← NEW
+# ✅ Импортируем ВСЕ модели — иначе create_all не создаст их таблицы
+from app.models import (  # noqa
+    User, UserRole,
+    Course,
+    Lesson, LessonProgress, LessonType,
+    Enrollment,
+    CourseAssignment,
+    Review,
+    Testimonial,
+    UserCoins, CoinTransaction, UserStreak,
+)
 
 
 @asynccontextmanager
@@ -53,7 +61,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(coins_router)   # ← NEW
+app.include_router(coins_router)
 app.include_router(graphql_router, prefix="/graphql")
 
 

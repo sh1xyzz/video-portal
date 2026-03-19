@@ -1,10 +1,4 @@
 // src/pages/CoursesView/CoursesDetailView.jsx
-// ✅ Галочки — markLessonComplete сохраняет в БД, прогресс обновляется
-// ✅ Комментарии — загружаются из БД (courseReviews query), пишутся через addReview mutation
-// ✅ "Презентация не добавлена" — исправлено: contentUrl из БД работает корректно
-// ✅ Continue Learning — ведёт к первому незавершённому уроку правильно
-// ✅ SlideViewer — если contentUrl есть, показывает iframe; если нет — текстовый режим
-// ✅ VideoModal — YouTube embed
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate, useParams }             from "react-router-dom";
@@ -15,15 +9,13 @@ import {
   ClockCircleOutlined, TeamOutlined, TrophyFilled,
   MobileOutlined, SafetyCertificateOutlined,
   StarFilled, LockFilled, PlaySquareOutlined,
-  FileTextOutlined, LeftOutlined, RightOutlined,
-  SendOutlined, UserOutlined, MessageOutlined,
-  BookOutlined, FireFilled, ThunderboltFilled,
+  FileTextOutlined, SendOutlined, UserOutlined,
+  MessageOutlined, BookOutlined, FireFilled, ThunderboltFilled,
 } from "@ant-design/icons";
-import Header         from "@/widgets/Header";
-import Footer         from "@/widgets/Footer";
-import useAuthStore   from "@/shared/store/useAuthStore";
-import useEnrollStore from "@/shared/store/useEnrollStore";
-import useCoinsStore  from "@/shared/store/useCoinsStore";
+import Header       from "@/widgets/Header";
+import Footer       from "@/widgets/Footer";
+import useAuthStore from "@/shared/store/useAuthStore";
+import useCoinsStore from "@/shared/store/useCoinsStore";
 import s from "./CoursesDetailView.module.css";
 import { toSlug } from "./courseUtils";
 
@@ -44,6 +36,9 @@ const GET_COURSE_DETAIL = gql`
   query GetCourseDetail($id: Int!) {
     courseDetail(id: $id) {
       id title totalLessons progressPercent completedLessons
+      isEnrolled
+      coinPrice
+      isFree
       lessons {
         id section title type duration isFree order
         contentUrl content completed
@@ -52,7 +47,6 @@ const GET_COURSE_DETAIL = gql`
   }
 `;
 
-// Отзывы к курсу
 const GET_REVIEWS = gql`
   query GetReviews($courseId: Int!) {
     courseReviews(courseId: $courseId) {
@@ -81,13 +75,23 @@ const DELETE_REVIEW = gql`
   }
 `;
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   SLIDE VIEWER
-   Показывает:
-   - если есть contentUrl → iframe (Google Slides / любой embed)
-   - если нет contentUrl, но есть content → текстовый режим
-   - если ничего нет → сообщение для преподавателя
-────────────────────────────────────────────────────────────────────────────── */
+const ENROLL_COURSE = gql`
+  mutation EnrollCourse($courseId: Int!) {
+    enrollCourse(courseId: $courseId) {
+      courseId
+      coinsSpent
+      message
+    }
+  }
+`;
+
+const UNENROLL_COURSE = gql`
+  mutation UnenrollCourse($courseId: Int!) {
+    unenrollCourse(courseId: $courseId)
+  }
+`;
+
+/* ── SlideViewer ─────────────────────────────────────────────────────────── */
 const SlideViewer = ({ lesson, onClose }) => {
   const isEmbed = !!lesson.contentUrl;
   const hasText = !!lesson.content;
@@ -111,21 +115,11 @@ const SlideViewer = ({ lesson, onClose }) => {
             <button className={s.slideCloseBtn} onClick={onClose}>✕</button>
           </div>
         </div>
-
-        {/* Embed iframe (Google Slides, PDF, etc.) */}
         {isEmbed && (
           <div className={s.slideEmbedWrap}>
-            <iframe
-              src={lesson.contentUrl}
-              className={s.slideEmbed}
-              allow="autoplay"
-              allowFullScreen
-              title={lesson.title}
-            />
+            <iframe src={lesson.contentUrl} className={s.slideEmbed} allow="autoplay" allowFullScreen title={lesson.title} />
           </div>
         )}
-
-        {/* Text content (theory / task) */}
         {!isEmbed && hasText && (
           <div className={s.slideContent}>
             <h2 className={s.slideTitle}>{lesson.title}</h2>
@@ -143,17 +137,11 @@ const SlideViewer = ({ lesson, onClose }) => {
             </div>
           </div>
         )}
-
-        {/* Nothing added yet */}
         {!isEmbed && !hasText && (
           <div className={s.slideEmpty}>
             <FileTextOutlined style={{ fontSize: 48, color: "var(--text-muted)" }} />
-            <p style={{ color: "var(--text-secondary)", marginTop: 16 }}>
-              Контент для этого урока ещё не добавлен.
-            </p>
-            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
-              Перейди в <strong>/admin</strong> → выбери курс → отредактируй урок и добавь ссылку или текст.
-            </p>
+            <p style={{ color: "var(--text-secondary)", marginTop: 16 }}>Контент для этого урока ещё не добавлен.</p>
+            <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Перейди в <strong>/admin</strong> → выбери курс → отредактируй урок.</p>
           </div>
         )}
       </div>
@@ -161,9 +149,7 @@ const SlideViewer = ({ lesson, onClose }) => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   VIDEO MODAL
-────────────────────────────────────────────────────────────────────────────── */
+/* ── VideoModal ──────────────────────────────────────────────────────────── */
 const VideoModal = ({ url, title, onClose }) => {
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
@@ -171,15 +157,11 @@ const VideoModal = ({ url, title, onClose }) => {
     return () => window.removeEventListener("keydown", h);
   }, [onClose]);
 
-  // Normalize URL: если пользователь вставил обычный youtube.com/watch — конвертируем в embed
   const embedUrl = useMemo(() => {
     if (!url) return "";
-    // уже embed
     if (url.includes("/embed/")) return url + (url.includes("?") ? "&autoplay=1" : "?autoplay=1");
-    // youtube.com/watch?v=ID
     const m = url.match(/[?&]v=([^&]+)/);
     if (m) return `https://www.youtube.com/embed/${m[1]}?autoplay=1`;
-    // youtu.be/ID
     const m2 = url.match(/youtu\.be\/([^?]+)/);
     if (m2) return `https://www.youtube.com/embed/${m2[1]}?autoplay=1`;
     return url + (url.includes("?") ? "&autoplay=1" : "?autoplay=1");
@@ -193,56 +175,34 @@ const VideoModal = ({ url, title, onClose }) => {
           <button className={s.videoClose} onClick={onClose}>✕</button>
         </div>
         <div className={s.videoPlayer}>
-          <iframe
-            width="100%" height="100%"
-            src={embedUrl}
-            title={title}
-            frameBorder="0"
+          <iframe width="100%" height="100%" src={embedUrl} title={title} frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+            allowFullScreen />
         </div>
       </div>
     </div>
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   COMPLETION MODAL
-────────────────────────────────────────────────────────────────────────────── */
+/* ── CompletionModal ─────────────────────────────────────────────────────── */
 const CompletionModal = ({ course, onClose }) => (
   <div className={s.completionBackdrop} onClick={onClose}>
     <div className={s.completionBox} onClick={e => e.stopPropagation()}>
       <div className={s.completionFireworks}>🎉</div>
-      <div className={s.completionTrophy}>
-        <TrophyFilled className={s.completionTrophyIcon} />
-      </div>
+      <div className={s.completionTrophy}><TrophyFilled className={s.completionTrophyIcon} /></div>
       <h2 className={s.completionTitle}>Course Complete!</h2>
       <p className={s.completionSub}>You've finished <strong>{course.title}</strong></p>
       <div className={s.completionRewards}>
-        <div className={s.completionReward}>
-          <ThunderboltFilled style={{ color: "#fbbf24" }} />
-          <span>+500 EduCoins earned</span>
-        </div>
-        <div className={s.completionReward}>
-          <TrophyFilled style={{ color: "#a89eff" }} />
-          <span>Certificate unlocked in profile</span>
-        </div>
-        <div className={s.completionReward}>
-          <FireFilled style={{ color: "#f87171" }} />
-          <span>Achievement: Course Finisher</span>
-        </div>
+        <div className={s.completionReward}><ThunderboltFilled style={{ color: "#fbbf24" }} /><span>+500 EduCoins earned</span></div>
+        <div className={s.completionReward}><TrophyFilled style={{ color: "#a89eff" }} /><span>Certificate unlocked in profile</span></div>
+        <div className={s.completionReward}><FireFilled style={{ color: "#f87171" }} /><span>Achievement: Course Finisher</span></div>
       </div>
-      <button className={s.completionBtn} onClick={onClose}>
-        🎓 View my certificate
-      </button>
+      <button className={s.completionBtn} onClick={onClose}>🎓 View my certificate</button>
     </div>
   </div>
 );
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   PROGRESS STEPS
-────────────────────────────────────────────────────────────────────────────── */
+/* ── ProgressSteps ───────────────────────────────────────────────────────── */
 const ProgressSteps = ({ lessons, progressPercent }) => {
   const sections = useMemo(() => {
     const map = new Map();
@@ -273,9 +233,7 @@ const ProgressSteps = ({ lessons, progressPercent }) => {
                   {sectionDone ? <CheckCircleFilled /> : si + 1}
                 </div>
                 <span className={s.stepSectionName}>{secName}</span>
-                <span className={s.stepSectionCount}>
-                  {secLessons.filter(l => l.completed).length}/{secLessons.length}
-                </span>
+                <span className={s.stepSectionCount}>{secLessons.filter(l => l.completed).length}/{secLessons.length}</span>
               </div>
               <div className={s.stepLessons}>
                 {secLessons.map(lesson => (
@@ -294,16 +252,13 @@ const ProgressSteps = ({ lessons, progressPercent }) => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   COMMENTS SECTION — данные из GraphQL, запись через мутацию
-────────────────────────────────────────────────────────────────────────────── */
+/* ── CommentsSection ─────────────────────────────────────────────────────── */
 const CommentsSection = ({ courseId, user, rating: courseRating }) => {
-  const [text, setText]       = useState("");
+  const [text, setText]         = useState("");
   const [myRating, setMyRating] = useState(5);
-  const [submitting, setSub]  = useState(false);
-  const [error, setError]     = useState("");
+  const [submitting, setSub]    = useState(false);
+  const [error, setError]       = useState("");
 
-  // Загружаем отзывы из БД
   const { data, loading, refetch } = useQuery(GET_REVIEWS, {
     variables: { courseId },
     skip: !courseId,
@@ -314,28 +269,20 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
   const [addReview]    = useMutation(ADD_REVIEW);
   const [deleteReview] = useMutation(DELETE_REVIEW);
 
-  const avg = reviews.length
-    ? (reviews.reduce((s, c) => s + c.rating, 0) / reviews.length).toFixed(1)
-    : courseRating;
-
+  const avg      = reviews.length ? (reviews.reduce((s, c) => s + c.rating, 0) / reviews.length).toFixed(1) : courseRating;
   const myReview = user ? reviews.find(r => r.userId === user.id) : null;
 
   const handleSubmit = async () => {
     if (!text.trim()) return;
     if (text.length > 500) { setError("Максимум 500 символов"); return; }
-    setSub(true);
-    setError("");
+    setSub(true); setError("");
     try {
-      await addReview({
-        variables: { input: { courseId, rating: myRating, text: text.trim() } },
-      });
+      await addReview({ variables: { input: { courseId, rating: myRating, text: text.trim() } } });
       setText("");
       await refetch();
     } catch (e) {
       setError(e.message || "Ошибка при отправке");
-    } finally {
-      setSub(false);
-    }
+    } finally { setSub(false); }
   };
 
   const handleDelete = async (reviewId) => {
@@ -344,9 +291,8 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
   };
 
   const formatDate = (iso) => {
-    try {
-      return new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-    } catch { return ""; }
+    try { return new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" }); }
+    catch { return ""; }
   };
 
   return (
@@ -358,8 +304,6 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
         </h2>
         <span className={s.sectionMeta}>{reviews.length} reviews</span>
       </div>
-
-      {/* Summary */}
       <div className={s.reviewSummary}>
         <div className={s.reviewBig}>
           <span className={s.reviewScore}>{avg}</span>
@@ -374,24 +318,16 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
             return (
               <div key={star} className={s.ratingBarRow}>
                 <span className={s.ratingBarLbl}>{star}★</span>
-                <div className={s.ratingBarTrack}>
-                  <div className={s.ratingBarFill} style={{ width: `${pct}%` }} />
-                </div>
+                <div className={s.ratingBarTrack}><div className={s.ratingBarFill} style={{ width: `${pct}%` }} /></div>
                 <span className={s.ratingBarPct}>{pct}%</span>
               </div>
             );
           })}
         </div>
       </div>
-
-      {/* Write review */}
       {user ? (
         <div className={s.writeComment}>
-          {myReview && (
-            <div className={s.myReviewNote}>
-              ✏️ У тебя уже есть отзыв — если напишешь снова, он обновится.
-            </div>
-          )}
+          {myReview && <div className={s.myReviewNote}>✏️ У тебя уже есть отзыв — если напишешь снова, он обновится.</div>}
           <div className={s.writeCommentTop}>
             <Avatar style={{ background: "var(--accent)", flexShrink: 0, fontSize: 11 }}>
               {(user.name || "?").slice(0, 2).toUpperCase()}
@@ -401,21 +337,12 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
               <Rate value={myRating} onChange={setMyRating} style={{ fontSize: 14 }} />
             </div>
           </div>
-          <textarea
-            className={s.commentInput}
-            placeholder="Share your experience with this course…"
-            value={text}
-            onChange={e => setText(e.target.value)}
-            rows={3}
-          />
+          <textarea className={s.commentInput} placeholder="Share your experience with this course…"
+            value={text} onChange={e => setText(e.target.value)} rows={3} />
           {error && <p className={s.commentError}>{error}</p>}
           <div className={s.writeCommentFoot}>
             <span className={s.commentChars}>{text.length}/500</span>
-            <button
-              className={s.commentSubmit}
-              onClick={handleSubmit}
-              disabled={!text.trim() || submitting || text.length > 500}
-            >
+            <button className={s.commentSubmit} onClick={handleSubmit} disabled={!text.trim() || submitting || text.length > 500}>
               {submitting ? "Posting…" : <><SendOutlined /> Post review</>}
             </button>
           </div>
@@ -429,11 +356,7 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
           </div>
         </div>
       )}
-
-      {/* Loading */}
       {loading && <div className={s.reviewsLoading}>Loading reviews…</div>}
-
-      {/* List */}
       <div className={s.commentList}>
         {reviews.map(r => {
           const isMe = user && r.userId === user.id;
@@ -444,55 +367,44 @@ const CommentsSection = ({ courseId, user, rating: courseRating }) => {
                   {r.userAvatar || r.userName?.slice(0, 2).toUpperCase()}
                 </Avatar>
                 <div className={s.reviewMeta}>
-                  <span className={s.reviewName}>
-                    {r.userName}
-                    {isMe && <span className={s.meBadge}>You</span>}
-                  </span>
+                  <span className={s.reviewName}>{r.userName}{isMe && <span className={s.meBadge}>You</span>}</span>
                   <span className={s.reviewDate}>{formatDate(r.createdAt)}</span>
                 </div>
                 <Rate disabled value={r.rating} style={{ fontSize: 11, marginLeft: "auto" }} />
                 {isMe && (
-                  <button className={s.deleteReviewBtn} onClick={() => handleDelete(r.id)} title="Delete my review">
-                    ✕
-                  </button>
+                  <button className={s.deleteReviewBtn} onClick={() => handleDelete(r.id)} title="Delete my review">✕</button>
                 )}
               </div>
               <p className={s.reviewText}>{r.text}</p>
             </div>
           );
         })}
-        {!loading && reviews.length === 0 && (
-          <div className={s.noReviews}>
-            Отзывов пока нет. Будь первым! 🎯
-          </div>
-        )}
+        {!loading && reviews.length === 0 && <div className={s.noReviews}>Отзывов пока нет. Будь первым! 🎯</div>}
       </div>
     </div>
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   MAIN COMPONENT
-────────────────────────────────────────────────────────────────────────────── */
+/* ── MAIN ────────────────────────────────────────────────────────────────── */
 const CourseDetailView = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
 
-  const { user }                         = useAuthStore();
-  const { enroll, unenroll, isEnrolled } = useEnrollStore();
-  const { awardCoins }                   = useCoinsStore?.() ?? {};
+  const { user } = useAuthStore();
+  const [enrollMutation,   { loading: enrolling   }] = useMutation(ENROLL_COURSE);
+  const [unenrollMutation, { loading: unenrolling }] = useMutation(UNENROLL_COURSE);
+  const { awardCoins } = useCoinsStore?.() ?? {};
 
   const [activeVideo,    setActiveVideo]    = useState(null);
   const [activeSlide,    setActiveSlide]    = useState(null);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [markingId,      setMarkingId]      = useState(null); // id урока в процессе отметки
+  const [markingId,      setMarkingId]      = useState(null);
 
   const closeVideo      = useCallback(() => setActiveVideo(null),     []);
   const closeSlide      = useCallback(() => setActiveSlide(null),     []);
   const closeCompletion = useCallback(() => setShowCompletion(false), []);
   const completionShown = useRef(false);
 
-  // 1. Все курсы → найти по slug
   const { data: allData } = useQuery(GET_ALL_COURSES);
   const allCourses = allData?.allCourses ?? [];
 
@@ -501,7 +413,6 @@ const CourseDetailView = () => {
     return allCourses.find(c => toSlug(c.title) === slug);
   }, [slug, allCourses]);
 
-  // 2. Детали курса (уроки + прогресс)
   const { data: detailData, refetch } = useQuery(GET_COURSE_DETAIL, {
     variables:   { id: courseBase?.id },
     skip:        !courseBase?.id,
@@ -515,9 +426,10 @@ const CourseDetailView = () => {
 
   const detail  = detailData?.courseDetail;
   const lessons = detail?.lessons ?? [];
-  const enrolled = isEnrolled(courseBase?.id);
 
-  // Обновить title
+  // ✅ isEnrolled берётся из GraphQL, а не из закомментированного стора
+  const enrolled = detail?.isEnrolled ?? false;
+
   useEffect(() => {
     if (courseBase?.title) {
       document.title = `${courseBase.title} | EduStream`;
@@ -525,7 +437,6 @@ const CourseDetailView = () => {
     }
   }, [courseBase?.title]);
 
-  // Проверка завершения курса
   useEffect(() => {
     if (!detail || !enrolled || completionShown.current) return;
     if (detail.progressPercent === 100 && detail.completedLessons > 0) {
@@ -535,59 +446,49 @@ const CourseDetailView = () => {
     }
   }, [detail?.progressPercent]);
 
-  const handleEnroll = () => {
-    if (!user || !courseBase) return;
-    enroll({
-      id:           courseBase.id,
-      title:        courseBase.title,
-      thumb:        courseBase.thumb,
-      instructor:   courseBase.instructor,
-      category:     courseBase.category,
-      level:        courseBase.level,
-      totalLessons: detail?.totalLessons ?? 0,
-    });
-  };
-
-  // ── Клик по уроку ─────────────────────────────────────────────────────────
-  const handleLessonClick = (lesson) => {
-    const accessible = enrolled || lesson.isFree;
-    if (!accessible) return;
-
-    if (lesson.type === "video") {
-      if (lesson.contentUrl) {
-        setActiveVideo({ url: lesson.contentUrl, title: lesson.title });
-      } else {
-        // Нет URL — показываем слайд с сообщением
-        setActiveSlide(lesson);
-      }
-    } else {
-      // presentation, theory, task — всё открывается в SlideViewer
-      setActiveSlide(lesson);
+  const handleEnroll = async () => {
+    if (!user || !courseBase?.id) return;
+    try {
+      const { data } = await enrollMutation({ variables: { courseId: courseBase.id } });
+      await refetch();
+      const spent = data?.enrollCourse?.coinsSpent ?? 0;
+      if (spent > 0) console.log(`Enrolled! Spent ${spent} EduCoins`);
+    } catch (err) {
+      alert(err.message.replace("Error: ", ""));
     }
   };
 
-  // ── Отметить урок выполненным ──────────────────────────────────────────────
+  const handleUnenroll = async () => {
+    if (!courseBase?.id) return;
+    try {
+      await unenrollMutation({ variables: { courseId: courseBase.id } });
+      await refetch();
+    } catch (err) {
+      alert(err.message.replace("Error: ", ""));
+    }
+  };
+
+  const handleLessonClick = (lesson) => {
+    const accessible = enrolled || lesson.isFree;
+    if (!accessible) return;
+    // Навигируем на полную страницу урока
+    navigate(`/courses/${courseBase.id}/lessons/${lesson.id}`);
+  };
+
   const handleMarkComplete = async (lessonId, e) => {
     e.stopPropagation();
     if (!user || !enrolled || markingId) return;
     setMarkingId(lessonId);
-    try {
-      await markComplete({ variables: { lessonId } });
-    } finally {
-      setMarkingId(null);
-    }
+    try { await markComplete({ variables: { lessonId } }); }
+    finally { setMarkingId(null); }
   };
 
-  // ── Continue Learning — первый незавершённый урок ──────────────────────────
   const handleContinue = () => {
     const sorted = [...lessons].sort((a, b) => a.order - b.order);
     const first  = sorted.find(l => !l.completed) ?? sorted[0];
-    if (first) {
-      handleLessonClick(first);
-    }
+    if (first) navigate(`/courses/${courseBase.id}/lessons/${first.id}`);
   };
 
-  // Группировка по секциям
   const sections = useMemo(() => {
     const map = new Map();
     for (const l of [...lessons].sort((a, b) => a.order - b.order)) {
@@ -599,16 +500,13 @@ const CourseDetailView = () => {
 
   const totalLessons = detail?.totalLessons ?? lessons.length;
 
-  // Курс не найден
   if (!courseBase && allCourses.length > 0) {
     return (
       <div className={s.root}>
         <Header />
         <div className={s.notFound}>
           <h2>Course not found</h2>
-          <p style={{ color: "var(--text-secondary)", marginBottom: 20 }}>
-            Slug: <code>{slug}</code>
-          </p>
+          <p style={{ color: "var(--text-secondary)", marginBottom: 20 }}>Slug: <code>{slug}</code></p>
           <button className={s.backBtn} onClick={() => navigate("/courses")}>← All courses</button>
         </div>
         <Footer />
@@ -621,14 +519,12 @@ const CourseDetailView = () => {
   return (
     <div className={s.root}>
       <Header />
-
-      {/* Modals */}
       {activeVideo    && <VideoModal    url={activeVideo.url} title={activeVideo.title} onClose={closeVideo} />}
       {activeSlide    && <SlideViewer  lesson={activeSlide}  onClose={closeSlide} />}
       {showCompletion && courseBase && <CompletionModal course={courseBase} onClose={closeCompletion} />}
 
       <main className={s.main}>
-        {/* ── Hero ── */}
+        {/* Hero */}
         <div className={s.hero}>
           <div className={s.heroBg}>
             {course.thumb && <img src={course.thumb} alt="" className={s.heroBgImg} />}
@@ -649,33 +545,24 @@ const CourseDetailView = () => {
                   <span className={s.ratingVal}>{course.rating}</span>
                 </div>
               )}
-              {course.students && (
-                <><div className={s.heroDot} /><TeamOutlined /><span>{course.students?.toLocaleString()} students</span></>
-              )}
-              {course.duration && (
-                <><div className={s.heroDot} /><ClockCircleOutlined /><span>{course.duration}</span></>
-              )}
+              {course.students && <><div className={s.heroDot} /><TeamOutlined /><span>{course.students?.toLocaleString()} students</span></>}
+              {course.duration && <><div className={s.heroDot} /><ClockCircleOutlined /><span>{course.duration}</span></>}
             </div>
             {course.instructor && (
               <div className={s.heroInstructor}>
-                <Avatar style={{ background: "var(--accent)" }}>
-                  {course.avatar || course.instructor?.slice(0, 2)}
-                </Avatar>
+                <Avatar style={{ background: "var(--accent)" }}>{course.avatar || course.instructor?.slice(0, 2)}</Avatar>
                 <span>by <strong>{course.instructor}</strong></span>
               </div>
             )}
             {enrolled && (
-              <div className={s.enrolledBadge}>
-                ✓ Enrolled · {detail?.progressPercent ?? 0}% complete
-              </div>
+              <div className={s.enrolledBadge}>✓ Enrolled · {detail?.progressPercent ?? 0}% complete</div>
             )}
           </div>
         </div>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <div className={s.body}>
           <div className={s.contentCol}>
-
             {/* Curriculum */}
             <div className={s.section}>
               <div className={s.sectionHeader}>
@@ -690,9 +577,7 @@ const CourseDetailView = () => {
                       header={
                         <div className={s.panelHeader}>
                           <span className={s.panelTitle}>{secName}</span>
-                          <span className={s.panelMeta}>
-                            {secLessons.filter(l => l.completed).length}/{secLessons.length} done
-                          </span>
+                          <span className={s.panelMeta}>{secLessons.filter(l => l.completed).length}/{secLessons.length} done</span>
                         </div>
                       }
                       className={s.panel}
@@ -720,8 +605,6 @@ const CourseDetailView = () => {
                               {accessible && lesson.type === "presentation" && <span className={s.slidesTag}><FileTextOutlined /> Slides</span>}
                               {accessible && (lesson.type === "theory" || lesson.type === "task") && <span className={s.theoryTag}><BookOutlined /> Read</span>}
                             </div>
-
-                            {/* Галочка — отметить как выполненный */}
                             {accessible && enrolled && !lesson.completed && (
                               <button
                                 className={`${s.doneBtn} ${isMarking ? s.doneBtnLoading : ""}`}
@@ -747,7 +630,7 @@ const CourseDetailView = () => {
                       <h3 className={s.lockTitle}>Content Locked</h3>
                       <p className={s.lockSub}>Enroll to unlock all lessons, slides, and your certificate.</p>
                       <button className={s.lockEnrollBtn} onClick={handleEnroll}>
-                        Enroll — {course.isFree ? "Free" : course.price}
+                        {detail?.isFree || !detail?.coinPrice ? "Enroll — Free" : `Enroll — ${detail.coinPrice} 🪙`}
                       </button>
                     </div>
                   </div>
@@ -755,13 +638,11 @@ const CourseDetailView = () => {
               </div>
             </div>
 
-            {/* Comments — из БД */}
             <CommentsSection courseId={course.id} user={user} rating={course.rating ?? 4.8} />
           </div>
 
-          {/* ── Sidebar ── */}
+          {/* Sidebar */}
           <div className={s.sideCol}>
-            {/* Enroll card */}
             <div className={s.enrollCard}>
               <div className={s.enrollThumb}>
                 {course.thumb && <img src={course.thumb} alt={course.title} />}
@@ -775,7 +656,16 @@ const CourseDetailView = () => {
                       </div>
                     )}
                     {user
-                      ? <button className={s.enrollBtn} onClick={handleEnroll}>Enroll in this course</button>
+                      ? (
+                        <button className={s.enrollBtn} onClick={handleEnroll} disabled={enrolling}>
+                          {enrolling
+                            ? "Enrolling…"
+                            : detail?.isFree || detail?.coinPrice === 0
+                              ? "Enroll for free"
+                              : `Enroll — ${detail?.coinPrice ?? "?"} 🪙 EduCoins`
+                          }
+                        </button>
+                      )
                       : <div className={s.loginCta}>Sign in to enroll</div>
                     }
                   </>
@@ -788,12 +678,9 @@ const CourseDetailView = () => {
                         <p className={s.enrolledSub}>{detail?.progressPercent ?? 0}% complete</p>
                       </div>
                     </div>
-                    {/* ── Continue Learning — открывает первый незавершённый урок ── */}
-                    <button className={s.startBtn} onClick={handleContinue}>
-                      ▶ Continue learning
-                    </button>
-                    <button className={s.unenrollBtn} onClick={() => unenroll(course.id)}>
-                      Unenroll
+                    <button className={s.startBtn} onClick={handleContinue}>▶ Continue learning</button>
+                    <button className={s.unenrollBtn} onClick={handleUnenroll} disabled={unenrolling}>
+                      {unenrolling ? "…" : "Unenroll"}
                     </button>
                   </>
                 )}
@@ -813,7 +700,6 @@ const CourseDetailView = () => {
               </div>
             </div>
 
-            {/* Progress Steps */}
             {enrolled && lessons.length > 0 && (
               <ProgressSteps lessons={lessons} progressPercent={detail?.progressPercent ?? 0} />
             )}

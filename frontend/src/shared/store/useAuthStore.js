@@ -1,5 +1,4 @@
 // src/shared/store/useAuthStore.js
-// Zustand стор: регистрация / логин / логаут / fetchMe
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -14,18 +13,18 @@ const useAuthStore = create(
       loading: false,
       error: null,
 
-      // ── Регистрация ────────────────────────────────────────────────────────
-      register: async ({ name, email, password }) => {
+      // ── Auth ───────────────────────────────────────────────────────────────
+
+      register: async ({ name, email, password, role = "student" }) => {
         set({ loading: true, error: null });
         try {
           const res = await fetch(`${API}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({ name, email, password, role }), // ✅ role передаётся
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Registration failed");
-
           set({ user: data.user, token: data.token, loading: false });
           return { ok: true };
         } catch (err) {
@@ -34,7 +33,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Логин ──────────────────────────────────────────────────────────────
       login: async ({ email, password }) => {
         set({ loading: true, error: null });
         try {
@@ -45,7 +43,6 @@ const useAuthStore = create(
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Invalid credentials");
-
           set({ user: data.user, token: data.token, loading: false });
           return { ok: true };
         } catch (err) {
@@ -54,7 +51,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Обновить профиль ───────────────────────────────────────────────────
       updateProfile: async (fields) => {
         const { token } = get();
         set({ loading: true, error: null });
@@ -69,7 +65,6 @@ const useAuthStore = create(
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.detail || "Update failed");
-
           set({ user: data, loading: false });
           return { ok: true };
         } catch (err) {
@@ -78,7 +73,6 @@ const useAuthStore = create(
         }
       },
 
-      // ── Восстановить сессию при перезагрузке ───────────────────────────────
       fetchMe: async () => {
         const { token } = get();
         if (!token) return;
@@ -97,18 +91,33 @@ const useAuthStore = create(
         }
       },
 
-      // ── Логаут ─────────────────────────────────────────────────────────────
       logout: () => set({ user: null, token: null, error: null }),
-
       clearError: () => set({ error: null }),
+
+      // ── Role helpers ───────────────────────────────────────────────────────
+
+      getRole: () => get().user?.role ?? null,
+
+      isAdmin: () => get().user?.role === "admin",
+
+      isTeacher: () => ["teacher", "admin"].includes(get().user?.role),
+
+      isAssistant: () =>
+        ["assistant", "teacher", "admin"].includes(get().user?.role),
+
+      isStudent: () => !!get().user,
+
+      canEditCourse: (course) => {
+        const { user } = get();
+        if (!user) return false;
+        if (user.role === "admin") return true;
+        if (user.role === "teacher") return course?.ownerId === user.id;
+        return false;
+      },
     }),
     {
-      name: "edustream-auth", // ключ в localStorage
-      partialize: (state) => ({
-        // сохраняем только token
-        token: state.token,
-        user: state.user,
-      }),
+      name: "edustream-auth",
+      partialize: (state) => ({ token: state.token, user: state.user }),
     },
   ),
 );

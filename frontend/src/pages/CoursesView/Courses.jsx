@@ -1,25 +1,12 @@
-// src/pages/Courses/Courses.jsx
-// ФИКС:
-// BUG-1: подключён к GraphQL (allCourses query)
-// BUG-2: карточки кликабельны → navigate /courses/:id
-// BUG-3: счётчики считаются по данным из БД
-// BUG-4: c.isFree вместо c.free
-// BUG-5: price уже строка "$49" из GraphQL — просто c.price, без `$${}`
-// BUG-6: убраны мёртвые импорты (Slider, FilterOutlined, ArrowRightOutlined)
-// BUG-7: добавлен кейс "newest" в switch (сортировка по id desc — последние добавленные)
-// CSS-1: добавлены skeleton-классы
-// CSS-2: добавлен @keyframes fadeUp
+// src/pages/CoursesView/Courses.jsx
 
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, gql } from "@apollo/client";
 import { Input, Select, Avatar, Empty } from "antd";
 import {
-  SearchOutlined,
-  StarFilled,
-  ClockCircleOutlined,
-  AppstoreOutlined,
-  UnorderedListOutlined,
+  SearchOutlined, StarFilled, ClockCircleOutlined,
+  AppstoreOutlined, UnorderedListOutlined, ThunderboltFilled,
 } from "@ant-design/icons";
 import Header from "@/widgets/Header";
 import Footer from "@/widgets/Footer";
@@ -28,31 +15,25 @@ import { toSlug } from "./courseUtils";
 
 const { Option } = Select;
 
-// ── GraphQL ──────────────────────────────────────────────────────────────────
-
 const GET_ALL_COURSES = gql`
   query {
     allCourses {
       id title instructor avatar
       rating students duration level
-      tag tagColor thumb price isFree category subtitle
+      tag tagColor thumb price isFree coinPrice category subtitle
     }
   }
 `;
 
-// ── Константы ─────────────────────────────────────────────────────────────────
-
 const SORT_OPTIONS = [
   { value: "popular",    label: "Most Popular"       },
   { value: "rating",     label: "Highest Rated"      },
-  { value: "newest",     label: "Newest"             },  // FIX BUG-7
+  { value: "newest",     label: "Newest"             },
   { value: "price_asc",  label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
 const LEVEL_ORDER = ["Beginner", "Intermediate", "Advanced"];
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
 
 const SkeletonGrid = () => (
   <div className={s.grid}>
@@ -73,7 +54,18 @@ const SkeletonGrid = () => (
   </div>
 );
 
-// ── Главный компонент ─────────────────────────────────────────────────────────
+// ✅ Форматирует цену в EduCoins
+const PriceTag = ({ course, className }) => {
+  if (course.isFree || course.coinPrice === 0) {
+    return <span className={className} style={{ color: "var(--green)" }}>Free</span>;
+  }
+  return (
+    <span className={className} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+      <ThunderboltFilled style={{ color: "#6c63ff", fontSize: "0.85em" }} />
+      {course.coinPrice} 🪙
+    </span>
+  );
+};
 
 const Courses = () => {
   const navigate = useNavigate();
@@ -90,7 +82,6 @@ const Courses = () => {
 
   const allCourses = data?.allCourses ?? [];
 
-  // Динамические категории и уровни из реальных данных (FIX BUG-3)
   const categories = useMemo(() => {
     const cats = [...new Set(allCourses.map(c => c.category).filter(Boolean))].sort();
     return ["All", ...cats];
@@ -101,32 +92,29 @@ const Courses = () => {
     return ["All", ...LEVEL_ORDER.filter(l => present.has(l))];
   }, [allCourses]);
 
-  // Фильтрация + сортировка
   const filtered = useMemo(() => {
     let list = [...allCourses];
     if (search)             list = list.filter(c => c.title.toLowerCase().includes(search.toLowerCase()));
     if (category !== "All") list = list.filter(c => c.category === category);
     if (level    !== "All") list = list.filter(c => c.level    === level);
-    if (freeOnly)           list = list.filter(c => c.isFree);  // FIX BUG-4
+    if (freeOnly)           list = list.filter(c => c.isFree || c.coinPrice === 0);
 
     switch (sort) {
-      case "rating":     list.sort((a, b) => b.rating   - a.rating);   break;
-      case "newest":     list.sort((a, b) => b.id       - a.id);       break; // FIX BUG-7
-      case "price_asc":  list.sort((a, b) => (a.isFree ? 0 : 1) - (b.isFree ? 0 : 1)); break;
-      case "price_desc": list.sort((a, b) => (b.isFree ? 0 : 1) - (a.isFree ? 0 : 1)); break;
+      case "rating":     list.sort((a, b) => b.rating    - a.rating);    break;
+      case "newest":     list.sort((a, b) => b.id        - a.id);        break;
+      case "price_asc":  list.sort((a, b) => (a.coinPrice || 0) - (b.coinPrice || 0)); break;
+      case "price_desc": list.sort((a, b) => (b.coinPrice || 0) - (a.coinPrice || 0)); break;
       case "popular":
-      default:           list.sort((a, b) => b.students - a.students); break;
+      default:           list.sort((a, b) => b.students  - a.students);  break;
     }
     return list;
   }, [allCourses, search, category, level, sort, freeOnly]);
 
-  const goToCourse = (course) =>
-  navigate(`/courses/${toSlug(course.title)}`);
+  const goToCourse = (course) => navigate(`/courses/${toSlug(course.title)}`);
 
   return (
     <div className={s.root}>
       <Header />
-
       <main className={s.main}>
         <div className={s.pageHeader}>
           <div className={s.pageHeaderBg} />
@@ -142,73 +130,56 @@ const Courses = () => {
         </div>
 
         <div className={s.layout}>
-          {/* Sidebar */}
           <aside className={s.sidebar}>
             <div className={s.filterBlock}>
               <p className={s.filterTitle}>Category</p>
               <div className={s.filterList}>
                 {categories.map(cat => (
-                  <button
-                    key={cat}
+                  <button key={cat}
                     className={`${s.filterItem} ${category === cat ? s.filterItemActive : ""}`}
-                    onClick={() => setCategory(cat)}
-                  >
+                    onClick={() => setCategory(cat)}>
                     {cat}
                     <span className={s.filterCount}>
-                      {cat === "All"
-                        ? allCourses.length
-                        : allCourses.filter(c => c.category === cat).length}
+                      {cat === "All" ? allCourses.length : allCourses.filter(c => c.category === cat).length}
                     </span>
                   </button>
                 ))}
               </div>
             </div>
-
             <div className={s.filterBlock}>
               <p className={s.filterTitle}>Level</p>
               <div className={s.filterList}>
                 {levels.map(lv => (
-                  <button
-                    key={lv}
+                  <button key={lv}
                     className={`${s.filterItem} ${level === lv ? s.filterItemActive : ""}`}
-                    onClick={() => setLevel(lv)}
-                  >
+                    onClick={() => setLevel(lv)}>
                     {lv}
                     <span className={s.filterCount}>
-                      {lv === "All"
-                        ? allCourses.length
-                        : allCourses.filter(c => c.level === lv).length}
+                      {lv === "All" ? allCourses.length : allCourses.filter(c => c.level === lv).length}
                     </span>
                   </button>
                 ))}
               </div>
             </div>
-
             <div className={s.filterBlock}>
               <p className={s.filterTitle}>Price</p>
               <button
                 className={`${s.filterItem} ${freeOnly ? s.filterItemActive : ""}`}
-                onClick={() => setFreeOnly(v => !v)}
-              >
+                onClick={() => setFreeOnly(v => !v)}>
                 Free only
                 <span className={s.filterCount}>
-                  {allCourses.filter(c => c.isFree).length}  {/* FIX BUG-4 */}
+                  {allCourses.filter(c => c.isFree || c.coinPrice === 0).length}
                 </span>
               </button>
             </div>
           </aside>
 
-          {/* Content */}
           <div className={s.content}>
             <div className={s.toolbar}>
               <div className={s.searchWrap}>
                 <SearchOutlined className={s.searchIcon} />
-                <Input
-                  placeholder="Search courses…"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className={s.searchInput}
-                />
+                <Input placeholder="Search courses…" value={search}
+                  onChange={e => setSearch(e.target.value)} className={s.searchInput} />
               </div>
               <div className={s.toolbarRight}>
                 <span className={s.resultCount}>{filtered.length} results</span>
@@ -216,32 +187,25 @@ const Courses = () => {
                   {SORT_OPTIONS.map(o => <Option key={o.value} value={o.value}>{o.label}</Option>)}
                 </Select>
                 <div className={s.viewToggle}>
-                  <button
-                    className={`${s.viewBtn} ${view === "grid" ? s.viewBtnActive : ""}`}
-                    onClick={() => setView("grid")}
-                  ><AppstoreOutlined /></button>
-                  <button
-                    className={`${s.viewBtn} ${view === "list" ? s.viewBtnActive : ""}`}
-                    onClick={() => setView("list")}
-                  ><UnorderedListOutlined /></button>
+                  <button className={`${s.viewBtn} ${view === "grid" ? s.viewBtnActive : ""}`}
+                    onClick={() => setView("grid")}><AppstoreOutlined /></button>
+                  <button className={`${s.viewBtn} ${view === "list" ? s.viewBtnActive : ""}`}
+                    onClick={() => setView("list")}><UnorderedListOutlined /></button>
                 </div>
               </div>
             </div>
 
             {error && (
               <div className={s.empty}>
-                <p style={{ color: "#f87171" }}>⚠️ Не удалось загрузить курсы: {error.message}</p>
+                <p style={{ color: "#f87171" }}>⚠️ {error.message}</p>
               </div>
             )}
-
             {loading && <SkeletonGrid />}
-
             {!loading && !error && filtered.length === 0 && (
               <div className={s.empty}>
                 <Empty description={<span style={{ color: "var(--muted)" }}>No courses found</span>} />
               </div>
             )}
-
             {!loading && !error && filtered.length > 0 && (
               <div className={view === "grid" ? s.grid : s.list}>
                 {filtered.map(course =>
@@ -254,15 +218,10 @@ const Courses = () => {
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );
 };
-
-// ── Grid Card ─────────────────────────────────────────────────────────────────
-// FIX BUG-2: onClick prop
-// FIX BUG-5: price уже строка "$49" → просто c.price, а не `$${c.price}`
 
 const GridCard = ({ course: c, onClick }) => (
   <div className={s.gridCard} onClick={onClick} role="button" tabIndex={0}
@@ -286,8 +245,7 @@ const GridCard = ({ course: c, onClick }) => (
         <span className={s.cardStat}><ClockCircleOutlined /> {c.duration}</span>
       </div>
       <div className={s.cardFooter}>
-        {/* FIX BUG-5: c.isFree (не c.free), c.price уже строка */}
-        <span className={s.cardPrice}>{c.isFree ? "Free" : c.price}</span>
+        <PriceTag course={c} className={s.cardPrice} />
         <button className={s.cardBtn} onClick={e => { e.stopPropagation(); onClick(); }}>
           Enroll
         </button>
@@ -295,8 +253,6 @@ const GridCard = ({ course: c, onClick }) => (
     </div>
   </div>
 );
-
-// ── List Card ─────────────────────────────────────────────────────────────────
 
 const ListCard = ({ course: c, onClick }) => (
   <div className={s.listCard} onClick={onClick} role="button" tabIndex={0}
@@ -316,7 +272,7 @@ const ListCard = ({ course: c, onClick }) => (
       </div>
     </div>
     <div className={s.listRight}>
-      <span className={s.cardPrice}>{c.isFree ? "Free" : c.price}</span>
+      <PriceTag course={c} className={s.cardPrice} />
       <button className={s.cardBtn} onClick={e => { e.stopPropagation(); onClick(); }}>Enroll</button>
     </div>
   </div>
