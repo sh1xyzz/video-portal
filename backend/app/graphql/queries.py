@@ -1,9 +1,8 @@
 # backend/app/graphql/queries.py
-# ✅ courseDetail: is_enrolled — из БД (Enrollment), не из localStorage
-# ✅ myCourses    — список курсов студента с прогрессом из БД
-# ✅ myTeacherCourses — курсы которые создал teacher
-# ✅ courseSubmissions — задания студентов (для assistant/teacher)
-# ✅ allUsers     — только admin
+# ✅ UserGQLType — добавлено is_banned
+# ✅ allUsers — возвращает is_banned
+# ✅ CourseListType — owner_id уже есть
+# ✅ Все поля маппятся через getattr (безопасно)
 
 import strawberry
 from typing import Optional
@@ -11,12 +10,10 @@ from strawberry.types import Info
 
 from app.services.course_service        import get_all_courses
 from app.services.course_detail_service import get_course_with_lessons, get_user_progress
-from app.services.enrollment_service    import (
-    is_enrolled, get_user_enrollments
-)
+from app.services.enrollment_service    import is_enrolled, get_user_enrollments
 
 
-# ── Типы ──────────────────────────────────────────────────────────────────────
+# ── Types ─────────────────────────────────────────────────────────────────────
 
 @strawberry.type
 class CourseListType:
@@ -35,10 +32,10 @@ class CourseListType:
     price:          Optional[str]
     price_value:    float
     is_free:        bool
-    coin_price:     int           # ← цена в EduCoins
+    coin_price:     int
     category:       Optional[str]
     subtitle:       Optional[str]
-    owner_id:       Optional[int] # ← кто создал
+    owner_id:       Optional[int]
 
 
 @strawberry.type
@@ -87,7 +84,7 @@ class CourseDetailType:
     total_lessons:     int
     completed_lessons: int
     progress_percent:  float
-    is_enrolled:       bool           # ← из БД!
+    is_enrolled:       bool
 
 
 @strawberry.type
@@ -115,17 +112,17 @@ class ReviewGQLType:
 
 @strawberry.type
 class EnrolledCourseType:
-    id:               int
-    title:            str
-    instructor:       str
-    thumb:            Optional[str]
-    category:         Optional[str]
-    level:            Optional[str]
-    total_lessons:    int
+    id:                int
+    title:             str
+    instructor:        str
+    thumb:             Optional[str]
+    category:          Optional[str]
+    level:             Optional[str]
+    total_lessons:     int
     completed_lessons: int
-    progress:         int
-    enrolled_at:      str
-    coins_spent:      int
+    progress:          int
+    enrolled_at:       str
+    coins_spent:       int
 
 
 @strawberry.type
@@ -148,10 +145,11 @@ class UserGQLType:
     email:      str
     role:       str
     avatar:     Optional[str]
+    is_banned:  bool          # ✅ поле добавлено
     created_at: str
 
 
-# ── Хелпер ───────────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _to_list_type(c) -> CourseListType:
     return CourseListType(
@@ -174,6 +172,18 @@ def _to_list_type(c) -> CourseListType:
         category       = c.category,
         subtitle       = getattr(c, "subtitle", None),
         owner_id       = getattr(c, "owner_id", None),
+    )
+
+
+def _to_user_type(u) -> UserGQLType:
+    return UserGQLType(
+        id         = u.id,
+        name       = u.name,
+        email      = u.email,
+        role       = u.role if isinstance(u.role, str) else u.role.value,
+        avatar     = u.avatar,
+        is_banned  = bool(getattr(u, "is_banned", False)),
+        created_at = u.created_at.isoformat() if u.created_at else "",
     )
 
 
@@ -245,10 +255,6 @@ class Query:
 
     @strawberry.field
     async def my_courses(self, info: Info) -> list[EnrolledCourseType]:
-        """
-        Курсы текущего студента из БД.
-        Роль: любой авторизованный.
-        """
         user = info.context.get("user")
         if not user:
             return []
@@ -268,20 +274,17 @@ class Query:
 
     @strawberry.field
     async def my_teacher_courses(self, info: Info) -> list[CourseListType]:
-        """
-        Курсы которые создал этот teacher/admin.
-        Роль: teacher, admin.
-        """
         user = info.context.get("user")
         if not user or user.role not in ("teacher", "admin"):
             return []
-
         from sqlalchemy import select
         from app.models.course import Course
         db = info.context["db"]
-
         courses = (await db.execute(
-            select(Course).where(Course.owner_id == user.id, Course.is_published == True)
+            select(Course).where(
+                Course.owner_id == user.id,
+                Course.is_published == True,
+            )
         )).scalars().all()
         return [_to_list_type(c) for c in courses]
 
@@ -289,10 +292,6 @@ class Query:
     async def course_submissions(
         self, info: Info, course_id: int, status: Optional[str] = None
     ) -> list[SubmissionGQLType]:
-        """
-        Задания студентов по курсу.
-        Роль: assistant (назначенный), teacher (owner), admin.
-        """
         user = info.context.get("user")
         if not user:
             raise ValueError("Authentication required")
@@ -300,13 +299,12 @@ class Query:
             raise ValueError("Access denied")
 
         db = info.context["db"]
-
         from app.services.submission_service import get_course_submissions
         from app.models.user import User as UserModel
         from app.models.lesson import Lesson
         from sqlalchemy import select
 
-        subs = await get_course_submissions(db, course_id, status)
+        subs   = await get_course_submissions(db, course_id, status)
         result = []
         for s in subs:
             student = (await db.execute(
@@ -326,10 +324,7 @@ class Query:
 
     @strawberry.field
     async def all_users(self, info: Info) -> list[UserGQLType]:
-        """
-        Все пользователи платформы.
-        Роль: только admin.
-        """
+        """Только admin. Возвращает is_banned."""
         user = info.context.get("user")
         if not user or user.role != "admin":
             raise ValueError("Admin access required")
@@ -337,16 +332,10 @@ class Query:
         from sqlalchemy import select
         from app.models.user import User as UserModel
         db   = info.context["db"]
-        rows = (await db.execute(select(UserModel).order_by(UserModel.id))).scalars().all()
-        return [
-            UserGQLType(
-                id=u.id, name=u.name, email=u.email,
-                role=u.role if isinstance(u.role, str) else u.role.value,
-                avatar=u.avatar,
-                created_at=u.created_at.isoformat() if u.created_at else "",
-            )
-            for u in rows
-        ]
+        rows = (await db.execute(
+            select(UserModel).order_by(UserModel.id)
+        )).scalars().all()
+        return [_to_user_type(u) for u in rows]
 
     @strawberry.field
     async def course_reviews(self, info: Info, course_id: int) -> list[ReviewGQLType]:

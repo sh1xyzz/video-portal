@@ -1,38 +1,45 @@
-/* Admin.module.css — dark editorial panel */
+/* Admin.module.css
+   Эстетика: тёмная editorial панель — строгая, профессиональная,
+   с акцентами через цвет и типографику. Никакого "корпоративного" вида.
+*/
+
+/* ── Root layout ─────────────────────────────────────────────────────────── */
 
 .root {
   display: flex;
   min-height: 100vh;
-  background: #09090f;
+  background: var(--bg, #09090f);
   font-family: "DM Sans", sans-serif;
-  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────────── */
+
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: #0b0b14;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: #0d0d16;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   padding: 24px 0;
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow: hidden;
 }
+
 .sidebarLogo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0 20px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin-bottom: 16px;
 }
+
 .logoIcon {
   font-size: 22px;
 }
+
 .logoText {
   font-family: "Syne", sans-serif;
   font-size: 17px;
@@ -40,6 +47,7 @@
   color: #fff;
   letter-spacing: -0.5px;
 }
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -47,6 +55,7 @@
   padding: 0 10px;
   flex: 1;
 }
+
 .navItem {
   display: flex;
   align-items: center;
@@ -55,50 +64,55 @@
   border-radius: 8px;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.15s;
   text-align: left;
 }
+
 .navItem:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.8);
 }
+
 .navItemActive {
   background: rgba(108, 99, 255, 0.15) !important;
   color: #a89eff !important;
   font-weight: 600;
 }
+
 .sidebarFooter {
   padding: 16px 20px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
+
 .siteLink {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.3);
   text-decoration: none;
   transition: color 0.15s;
 }
+
 .siteLink:hover {
   color: rgba(255, 255, 255, 0.7);
 }
 
 /* ── Main ─────────────────────────────────────────────────────────────────── */
+
 .main {
   flex: 1;
   padding: 40px 48px;
   min-width: 0;
-  max-width: 1200px;
 }
+
 .mainHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 36px;
-  gap: 20px;
-  flex-wrap: wrap;
 }
+
 .mainTitle {
   font-family: "Syne", sans-serif;
   font-size: 28px;
@@ -107,65 +121,50 @@
   letter-spacing: -1px;
   margin: 0 0 6px;
 }
+
 .mainSub {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
   margin: 0;
 }
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+
 .stats {
   display: flex;
-  gap: 10px;
+  gap: 16px;
 }
+
 .stat {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: 10px 18px;
+  padding: 12px 20px;
   text-align: center;
 }
+
 .statVal {
   display: block;
   font-family: "Syne", sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   color: #a89eff;
 }
+
 .statLabel {
   display: block;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.newCourseBtn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 18px;
-  border-radius: 10px;
-  background: #6c63ff;
-  border: none;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.newCourseBtn:hover {
-  opacity: 0.85;
-}
 
 /* ── Course grid ──────────────────────────────────────────────────────────── */
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
+
 .courseCard {
   background: #0d0d16;
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -178,24 +177,29 @@
   display: flex;
   flex-direction: column;
 }
+
 .courseCard:hover {
-  border-color: rgba(108, 99, 255, 0.4);
+  border-color: rgba(108, 99, 255, 0.35);
   transform: translateY(-3px);
 }
+
 .courseThumb {
   position: relative;
   overflow: hidden;
 }
+
 .courseThumb img {
   width: 100%;
-  height: 130px;
+  height: 140px;
   object-fit: cover;
   display: block;
-  transition: transform 0.35s;
+  transition: transform 0.3s;
 }
+
 .courseCard:hover .courseThumb img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
+
 .courseTag {
   position: absolute;
   top: 8px;
@@ -206,10 +210,12 @@
   font-weight: 700;
   color: #09090f;
 }
+
 .courseInfo {
-  padding: 12px 14px 8px;
+  padding: 14px 16px 10px;
   flex: 1;
 }
+
 .courseCat {
   font-size: 10px;
   font-weight: 700;
@@ -217,84 +223,73 @@
   text-transform: uppercase;
   color: #6c63ff;
 }
+
 .courseTitle {
   font-family: "Syne", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #fff;
-  margin: 3px 0;
+  margin: 4px 0;
   line-height: 1.3;
 }
+
 .courseInstructor {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
   margin: 0;
 }
+
 .courseActions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
-.courseActionLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
+
 .courseLevel {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 2px 7px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
   border-radius: 100px;
-  width: fit-content;
 }
-.courseSlug {
-  font-size: 10px;
-  color: rgba(108, 99, 255, 0.5);
-  font-family: monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 160px;
-}
+
 .editBtn {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 6px 12px;
   border-radius: 7px;
   background: rgba(108, 99, 255, 0.15);
   border: 1px solid rgba(108, 99, 255, 0.25);
   color: #a89eff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.editBtn:hover {
-  background: rgba(108, 99, 255, 0.28);
 }
 
-/* ── Editor ───────────────────────────────────────────────────────────────── */
+.editBtn:hover {
+  background: rgba(108, 99, 255, 0.25);
+}
+
+/* ── Course editor ────────────────────────────────────────────────────────── */
+
 .editor {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  min-width: 0;
 }
+
 .editorHeader {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
+
 .backLink {
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -306,16 +301,19 @@
   transition: all 0.15s;
   flex-shrink: 0;
 }
+
 .backLink:hover {
   border-color: rgba(255, 255, 255, 0.25);
   color: rgba(255, 255, 255, 0.8);
 }
+
 .editorTitle {
   flex: 1;
   display: flex;
   align-items: baseline;
   gap: 12px;
 }
+
 .editorTitle h2 {
   font-family: "Syne", sans-serif;
   font-size: 22px;
@@ -324,16 +322,18 @@
   margin: 0;
   letter-spacing: -0.5px;
 }
+
 .editorMeta {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.3);
 }
+
 .addBtn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 16px;
-  border-radius: 9px;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   background: #6c63ff;
   border: none;
   color: #fff;
@@ -343,165 +343,86 @@
   transition: opacity 0.2s;
   flex-shrink: 0;
 }
+
 .addBtn:hover {
   opacity: 0.85;
 }
 
-.slugInfo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: rgba(108, 99, 255, 0.07);
-  border: 1px solid rgba(108, 99, 255, 0.15);
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
-}
-.slugInfo code {
-  color: #a89eff;
-  font-family: monospace;
-}
-
 /* ── Lesson form ──────────────────────────────────────────────────────────── */
+
 .lessonForm {
   background: #0d0d16;
-  border: 1px solid rgba(108, 99, 255, 0.3);
+  border: 1px solid rgba(108, 99, 255, 0.25);
   border-radius: 16px;
-  padding: 0;
-  overflow: hidden;
-  animation: slideDown 0.18s ease both;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: slideDown 0.2s ease both;
 }
+
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: translateY(0);
   }
-}
-.formHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(108, 99, 255, 0.08);
-}
-.formHeaderTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
-}
-.formHeaderClose {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-  color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.12s;
-}
-.formHeaderClose:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* inner form content — pad here */
-.lessonForm > .formRow,
-.lessonForm > .formGroup,
-.lessonForm > .checkLabel,
-.lessonForm > .formActions {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-.lessonForm > .formRow {
-  padding-top: 18px;
-}
-.lessonForm > .formGroup {
-  padding-top: 14px;
-}
-.lessonForm > .checkLabel {
-  padding-top: 14px;
-  display: flex;
-}
-.lessonForm > .formActions {
-  padding-top: 16px;
-  padding-bottom: 18px;
-  margin-top: 4px;
 }
 
 .formRow {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
   flex-wrap: wrap;
 }
+
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  min-width: 160px;
+  min-width: 180px;
 }
+
 .formLabel {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
 }
+
 .formInput {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   transition: border-color 0.15s;
   width: 100%;
   box-sizing: border-box;
-  font-family: inherit;
 }
+
 .formInput:focus {
   outline: none;
-  border-color: rgba(108, 99, 255, 0.55);
-  background: rgba(108, 99, 255, 0.05);
+  border-color: rgba(108, 99, 255, 0.5);
 }
+
 .formInput::placeholder {
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.2);
 }
-.formInputColor {
-  padding: 4px 8px;
-  height: 38px;
-  cursor: pointer;
-}
-.formSelect {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 9px 12px;
-  color: #fff;
-  font-size: 13px;
-  font-family: inherit;
-  cursor: pointer;
-}
-.formSelect option {
-  background: #1a1a2e;
-}
+
 .formTextarea {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 10px 12px;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   resize: vertical;
   width: 100%;
@@ -509,49 +430,21 @@
   transition: border-color 0.15s;
   font-family: inherit;
 }
+
 .formTextarea:focus {
   outline: none;
-  border-color: rgba(108, 99, 255, 0.55);
+  border-color: rgba(108, 99, 255, 0.5);
 }
+
 .formTextarea::placeholder {
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.2);
 }
+
 .formHint {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.25);
   margin: 0;
-  line-height: 1.55;
-}
-.formHint code {
-  background: rgba(255, 255, 255, 0.07);
-  padding: 1px 5px;
-  border-radius: 4px;
-  font-size: 10px;
-  color: #a89eff;
-}
-.formHintBox {
-  background: rgba(96, 165, 250, 0.07);
-  border: 1px solid rgba(96, 165, 250, 0.18);
-  border-radius: 9px;
-  padding: 12px 14px;
-  margin-top: 6px;
-}
-.formHintTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(96, 165, 250, 0.9);
-  margin: 0 0 8px;
-}
-.formHintList {
-  margin: 0;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.formHintList li {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
 }
 
 .typeButtons {
@@ -559,45 +452,29 @@
   gap: 6px;
   flex-wrap: wrap;
 }
+
 .typeBtn {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 7px 11px;
+  padding: 7px 12px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.45);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  font-family: inherit;
-}
-.typeBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.75);
 }
 
-.previewBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 8px;
-  margin-top: 6px;
-  background: rgba(96, 165, 250, 0.1);
-  border: 1px solid rgba(96, 165, 250, 0.25);
-  color: rgba(96, 165, 250, 0.85);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-  width: fit-content;
+.typeBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
 }
-.previewBtn:hover {
-  background: rgba(96, 165, 250, 0.2);
+
+.typeBtnActive {
+  font-weight: 700;
 }
 
 .checkLabel {
@@ -605,20 +482,24 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
+
 .checkLabel input {
   accent-color: #6c63ff;
   width: 15px;
   height: 15px;
 }
+
 .formActions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  padding-top: 4px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
+
 .cancelBtn {
   padding: 9px 18px;
   border-radius: 8px;
@@ -628,12 +509,13 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.15s;
-  font-family: inherit;
 }
+
 .cancelBtn:hover {
   border-color: rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.7);
 }
+
 .saveBtn {
   display: flex;
   align-items: center;
@@ -647,17 +529,827 @@
   font-weight: 700;
   cursor: pointer;
   transition: opacity 0.2s;
-  font-family: inherit;
 }
+
 .saveBtn:hover {
   opacity: 0.85;
 }
 .saveBtn:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* ── Course form overlay ──────────────────────────────────────────────────── */
+/* ── Sections / lessons list ──────────────────────────────────────────────── */
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section {
+  background: #0d0d16;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(108, 99, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sectionName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #a89eff;
+  letter-spacing: 0.3px;
+}
+
+.sectionCount {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.lessonRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s;
+}
+
+.lessonRow:last-child {
+  border-bottom: none;
+}
+.lessonRow:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lessonNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.lessonTypeIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.lessonInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.lessonTitle {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lessonMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 2px;
+}
+
+.freeBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #43e97b;
+  background: rgba(67, 233, 123, 0.1);
+  padding: 1px 6px;
+  border-radius: 100px;
+}
+
+.lessonStatus {
+  flex-shrink: 0;
+}
+
+.hasContent {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #43e97b;
+}
+
+.noContent {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Empty / Loading ──────────────────────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 48px;
+}
+
+.emptyState p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -600px 0;
+  }
+  to {
+    background-position: 600px 0;
+  }
+}
+
+.skCard,
+.skRow {
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 1200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skCard {
+  height: 220px;
+}
+.skRow {
+  height: 52px;
+}
+
+.skThumb {
+  height: 140px;
+  background: inherit;
+  background-size: inherit;
+  animation: shimmer 1.5s infinite;
+}
+
+.skBody {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skLine {
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+  .main {
+    padding: 24px 20px;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 580px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .formRow {
+    flex-direction: column;
+  }
+  .typeButtons {
+    gap: 4px;
+  }
+}
+
+/* ── Task hint box ────────────────────────────────────────────────────────── */
+.taskHintBox {
+  background: rgba(251, 146, 60, 0.07);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.taskHintTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(251, 146, 60, 0.9);
+  margin: 0;
+}
+.taskHintText {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+.taskHintCode {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #fb923c;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Form body padding ────────────────────────────────────────────────────── */
+.formBody {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Loading wrap ─────────────────────────────────────────────────────────── */
+.loadingWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+/* ── User ID sub ──────────────────────────────────────────────────────────── */
+.userRowId {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Lesson meta row ──────────────────────────────────────────────────────── */
+.lessonMeta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+/* ── Color input ──────────────────────────────────────────────────────────── */
+.formInputColor {
+  width: 100%;
+  height: 38px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ── Task hint box ────────────────────────────────────────────────────────── */
+.taskHintBox {
+  background: rgba(251, 146, 60, 0.07);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.taskHintTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(251, 146, 60, 0.9);
+  margin: 0;
+}
+.taskHintText {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+.taskHintCode {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #fb923c;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Form body padding ────────────────────────────────────────────────────── */
+.formBody {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Loading wrap ─────────────────────────────────────────────────────────── */
+.loadingWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+/* ── User ID sub ──────────────────────────────────────────────────────────── */
+.userRowId {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Lesson meta row ──────────────────────────────────────────────────────── */
+.lessonMeta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+/* ── Color input ──────────────────────────────────────────────────────────── */
+.formInputColor {
+  width: 100%;
+  height: 38px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ── Users table 6 columns ────────────────────────────────────────────────── */
+.usersTableHead {
+  grid-template-columns: 2fr 2fr 1fr 1fr 1.4fr 1.2fr !important;
+}
+.userRow {
+  grid-template-columns: 2fr 2fr 1fr 1fr 1.4fr 1.2fr !important;
+}
+
+/* ── Banned row ───────────────────────────────────────────────────────────── */
+.userRowBanned {
+  opacity: 0.55;
+  background: rgba(248, 113, 113, 0.04) !important;
+}
+.userRowBanned:hover {
+  background: rgba(248, 113, 113, 0.07) !important;
+}
+
+/* ── User actions cell ────────────────────────────────────────────────────── */
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Confirm delete modal ─────────────────────────────────────────────────── */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+.confirmBox {
+  background: #0d0d16;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 18px;
+  padding: 36px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 40px 100px rgba(248, 113, 113, 0.15);
+  animation: popUp 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.confirmIcon {
+  font-size: 40px;
+  line-height: 1;
+}
+.confirmTitle {
+  font-family: "Syne", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+.confirmText {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  margin: 0;
+}
+.confirmText strong {
+  color: rgba(255, 255, 255, 0.85);
+}
+.confirmActions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   USERS TAB — полные стили
+══════════════════════════════════════════════════════════════ */
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.courseActionLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.courseCoinPrice {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.usersTab {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Stat cards */
+.userStats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.userStatCard {
+  flex: 1;
+  min-width: 80px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.userStatVal {
+  font-family: "Syne", sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.userStatLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+/* Toolbar */
+.usersToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.usersSearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0 14px;
+  transition: border-color 0.15s;
+}
+.usersSearch:focus-within {
+  border-color: rgba(108, 99, 255, 0.4);
+}
+
+.usersSearchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 0;
+  font-family: "DM Sans", sans-serif;
+}
+.usersSearchInput::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.roleFilters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.roleFilterBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  transition: all 0.15s;
+  text-transform: capitalize;
+}
+.roleFilterBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
+}
+.roleFilterBtnActive {
+  background: rgba(108, 99, 255, 0.15) !important;
+  border-color: rgba(108, 99, 255, 0.35) !important;
+  color: #a89eff !important;
+}
+
+/* Table */
+.usersTable {
+  background: #0d0d16;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.usersTableHead {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1.4fr 1.2fr;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.userRow {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1.4fr 1.2fr;
+  gap: 12px;
+  padding: 12px 20px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.1s;
+}
+.userRow:last-child {
+  border-bottom: none;
+}
+.userRow:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.userRowBanned {
+  opacity: 0.55;
+  background: rgba(248, 113, 113, 0.04) !important;
+}
+.userRowBanned:hover {
+  background: rgba(248, 113, 113, 0.07) !important;
+}
+
+.userRowAvatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.userAvCircle {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Syne", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  overflow: hidden;
+}
+
+.userRowName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.userRowId {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.userRowEmail {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRowDate {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.userRoleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.userRoleSelect {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.roleSelect {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.roleSelect:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.roleSelect:focus {
+  border-color: rgba(108, 99, 255, 0.5);
+}
+
+.savingDot {
+  font-size: 10px;
+  color: #6c63ff;
+  animation: pulse 0.8s ease infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Confirm modal */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.confirmBox {
+  background: #0d0d16;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 18px;
+  padding: 36px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 40px 100px rgba(248, 113, 113, 0.15);
+}
+.confirmIcon {
+  font-size: 40px;
+  line-height: 1;
+}
+.confirmTitle {
+  font-family: "Syne", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+.confirmText {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  margin: 0;
+}
+.confirmText strong {
+  color: rgba(255, 255, 255, 0.85);
+}
+.confirmActions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Course form overlay */
 .courseFormOverlay {
   position: fixed;
   inset: 0;
@@ -668,36 +1360,16 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  animation: fadeIn 0.15s ease;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 .courseFormBox {
   background: #0d0d16;
-  border: 1px solid rgba(108, 99, 255, 0.3);
+  border: 1px solid rgba(108, 99, 255, 0.25);
   border-radius: 18px;
   width: 100%;
   max-width: 680px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  animation: popUp 0.18s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-@keyframes popUp {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 .courseFormScroll {
   flex: 1;
@@ -707,12 +1379,46 @@
   flex-direction: column;
   gap: 14px;
 }
-.courseFormBox .formActions {
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(108, 99, 255, 0.06);
+  border-radius: 18px 18px 0 0;
+}
+.formHeaderTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* ── Preview ──────────────────────────────────────────────────────────────── */
+/* Slug info */
+.slugInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(108, 99, 255, 0.06);
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+.slugInfo code {
+  color: #a89eff;
+  font-family: monospace;
+}
+
+/* Lesson actions */
+.lessonActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Preview */
 .previewBackdrop {
   position: fixed;
   inset: 0;
@@ -735,24 +1441,12 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .previewClose {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
   z-index: 10;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.12s;
-}
-.previewClose:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #fff !important;
 }
 .previewIframe {
   width: 100%;
@@ -765,275 +1459,22 @@
   padding: 24px;
   overflow-y: auto;
   box-sizing: border-box;
-}
-.previewText pre {
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   line-height: 1.7;
-  white-space: pre-wrap;
-  margin: 0;
 }
-
-/* ── Lesson list ──────────────────────────────────────────────────────────── */
-.sectionList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.errorBox {
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  color: #f87171;
+  font-size: 13px;
 }
 .sectionBlock {
   background: #0d0d16;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 14px;
   overflow: hidden;
-}
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(108, 99, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.sectionName {
-  font-size: 12px;
-  font-weight: 700;
-  color: #a89eff;
-  letter-spacing: 0.3px;
-}
-.sectionCount {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.25);
-}
-.lessonRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.12s;
-}
-.lessonRow:last-child {
-  border-bottom: none;
-}
-.lessonRow:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-.lessonNum {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-}
-.lessonTypeIcon {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-.lessonInfo {
-  flex: 1;
-  min-width: 0;
-}
-.lessonTitle {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.82);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.lessonMeta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.28);
-  margin-top: 2px;
-}
-.freeBadge {
-  font-size: 10px;
-  font-weight: 700;
-  color: #43e97b;
-  background: rgba(67, 233, 123, 0.1);
-  padding: 1px 6px;
-  border-radius: 100px;
-}
-.lessonStatus {
-  flex-shrink: 0;
-}
-.hasContent {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #43e97b;
-}
-.noContent {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.2);
-}
-.lessonActions {
-  display: flex;
-  gap: 6px;
-  flex-shrink: 0;
-}
-.actionBtn {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  transition: all 0.12s;
-}
-.actionBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.85);
-}
-.actionBtnDanger:hover {
-  background: rgba(248, 113, 113, 0.15);
-  border-color: rgba(248, 113, 113, 0.3);
-  color: #f87171;
-}
-.actionBtn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-/* ── Empty / loading ──────────────────────────────────────────────────────── */
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 64px 24px;
-  text-align: center;
-}
-.emptyIcon {
-  font-size: 48px;
-}
-.emptyState p {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.3);
-  margin: 0;
-}
-.loading {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-@keyframes shimmer {
-  from {
-    background-position: -600px 0;
-  }
-  to {
-    background-position: 600px 0;
-  }
-}
-.skCard {
-  border-radius: 14px;
-  height: 210px;
-  overflow: hidden;
-  background: #0d0d16;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-.skThumb {
-  height: 130px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.04) 75%
-  );
-  background-size: 1200px 100%;
-  animation: shimmer 1.5s infinite;
-}
-.skBody {
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.skLine {
-  height: 12px;
-  border-radius: 6px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.04) 75%
-  );
-  background-size: 1200px 100%;
-  animation: shimmer 1.5s infinite;
-}
-.skRow {
-  height: 52px;
-  border-radius: 10px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.07) 50%,
-    rgba(255, 255, 255, 0.04) 75%
-  );
-  background-size: 1200px 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
-  .main {
-    padding: 24px 18px;
-  }
-  .grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 560px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .formRow {
-    flex-direction: column;
-  }
-}
-
-/* ── Error box ────────────────────────────────────────────────────────────── */
-.errorBox {
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.25);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  color: #f87171;
-  font-size: 14px;
-}
-.errorBox code {
-  background: rgba(248, 113, 113, 0.15);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
 }

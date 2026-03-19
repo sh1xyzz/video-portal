@@ -471,12 +471,8 @@ const CourseDetailView = () => {
   const handleLessonClick = (lesson) => {
     const accessible = enrolled || lesson.isFree;
     if (!accessible) return;
-    if (lesson.type === "video") {
-      if (lesson.contentUrl) setActiveVideo({ url: lesson.contentUrl, title: lesson.title });
-      else setActiveSlide(lesson);
-    } else {
-      setActiveSlide(lesson);
-    }
+    // Навигируем на полную страницу урока
+    navigate(`/courses/${courseBase.id}/lessons/${lesson.id}`);
   };
 
   const handleMarkComplete = async (lessonId, e) => {
@@ -490,7 +486,7 @@ const CourseDetailView = () => {
   const handleContinue = () => {
     const sorted = [...lessons].sort((a, b) => a.order - b.order);
     const first  = sorted.find(l => !l.completed) ?? sorted[0];
-    if (first) handleLessonClick(first);
+    if (first) navigate(`/courses/${courseBase.id}/lessons/${first.id}`);
   };
 
   const sections = useMemo(() => {
@@ -574,7 +570,7 @@ const CourseDetailView = () => {
                 <span className={s.sectionMeta}>{totalLessons} lessons</span>
               </div>
               <div className={s.curriculumWrap}>
-                <Collapse ghost expandIconPlacement="end" className={s.curriculum} defaultActiveKey={["0"]}>
+                <Collapse ghost expandIconPosition="end" className={s.curriculum} defaultActiveKey={["0"]}>
                   {sections.map(([secName, secLessons], si) => (
                     <Panel
                       key={si}

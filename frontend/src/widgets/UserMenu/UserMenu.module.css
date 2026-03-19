@@ -706,3 +706,93 @@
   opacity: 0.9;
   color: var(--red);
 }
+
+/* ── Добавить в Header.module.css ── */
+
+.navLinkActive {
+  color: var(--text-primary) !important;
+  background: var(--surface-hover);
+}
+
+.adminBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.adminBtn:hover,
+.adminBtnActive {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.teacherBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  color: #a89eff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.teacherBtn:hover {
+  background: rgba(108, 99, 255, 0.15);
+  border-color: rgba(108, 99, 255, 0.35);
+}
+
+/* ── Добавить в UserMenu.module.css ── */
+
+.roleBadge {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.navBtnAdmin {
+  color: #f87171 !important;
+  background: rgba(239, 68, 68, 0.05) !important;
+}
+.navBtnAdmin:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+.navBtnAdmin .navIco {
+  color: #f87171 !important;
+  opacity: 1 !important;
+}
+
+.navAdminBadge {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 1px 6px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

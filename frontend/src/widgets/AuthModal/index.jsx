@@ -1,5 +1,4 @@
 // src/widgets/AuthModal/AuthModal.jsx
-// Полностью рабочая модалка — подключена к useAuthStore
 
 import { useState, useEffect } from "react";
 import { Input, Checkbox } from "antd";
@@ -7,27 +6,48 @@ import {
   CloseOutlined, MailOutlined, LockOutlined, UserOutlined,
   EyeInvisibleOutlined, EyeTwoTone,
   GoogleOutlined, GithubOutlined, LoadingOutlined,
+  BookOutlined, ReadOutlined,
 } from "@ant-design/icons";
 import useAuthStore from "@/shared/store/useAuthStore";
 import s from "./AuthModal.module.css";
+
+const ROLE_OPTIONS = [
+  {
+    value:   "student",
+    icon:    <ReadOutlined />,
+    label:   "Student",
+    desc:    "I want to learn new skills",
+    color:   "#34d399",
+    bg:      "rgba(52,211,153,.1)",
+    border:  "rgba(52,211,153,.3)",
+  },
+  {
+    value:   "teacher",
+    icon:    <BookOutlined />,
+    label:   "Teacher",
+    desc:    "I want to create courses",
+    color:   "#a89eff",
+    bg:      "rgba(108,99,255,.1)",
+    border:  "rgba(108,99,255,.3)",
+  },
+];
 
 const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
   const [mode,     setMode]     = useState(defaultMode);
   const [name,     setName]     = useState("");
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
+  const [role,     setRole]     = useState("student");
   const [agree,    setAgree]    = useState(false);
   const [fieldErr, setFieldErr] = useState({});
 
   const { login, register, loading, error, clearError } = useAuthStore();
 
-  // Синхронизируем mode с пропом
   useEffect(() => { setMode(defaultMode); }, [defaultMode]);
 
-  // Очищаем при закрытии
   useEffect(() => {
     if (!open) {
-      setName(""); setEmail(""); setPassword("");
+      setName(""); setEmail(""); setPassword(""); setRole("student");
       setFieldErr({}); clearError();
     }
   }, [open]);
@@ -48,11 +68,9 @@ const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-
     const result = isLogin
       ? await login({ email, password })
-      : await register({ name, email, password });
-
+      : await register({ name, email, password, role });
     if (result.ok) onClose();
   };
 
@@ -95,7 +113,7 @@ const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
           </p>
         </div>
 
-        {/* Social (заглушки) */}
+        {/* Social */}
         <div className={s.socials}>
           <button className={s.socialBtn}><GoogleOutlined className={s.socialIcon} /><span>Google</span></button>
           <button className={s.socialBtn}><GithubOutlined className={s.socialIcon} /><span>GitHub</span></button>
@@ -107,12 +125,8 @@ const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
           <span className={s.dividerLine} />
         </div>
 
-        {/* Global error */}
-        {error && (
-          <div className={s.globalError}>{error}</div>
-        )}
+        {error && <div className={s.globalError}>{error}</div>}
 
-        {/* Fields */}
         <div className={s.fields}>
           {!isLogin && (
             <div className={s.field}>
@@ -156,6 +170,42 @@ const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
             {fieldErr.password && <p className={s.fieldError}>{fieldErr.password}</p>}
           </div>
 
+          {/* ── Role picker — только при регистрации ── */}
+          {!isLogin && (
+            <div className={s.field}>
+              <p className={s.roleLabel}>I am joining as…</p>
+              <div className={s.roleCards}>
+                {ROLE_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${s.roleCard} ${role === opt.value ? s.roleCardActive : ""}`}
+                    style={role === opt.value ? {
+                      borderColor: opt.border,
+                      background:  opt.bg,
+                    } : {}}
+                    onClick={() => setRole(opt.value)}
+                  >
+                    <span
+                      className={s.roleCardIcon}
+                      style={role === opt.value ? { color: opt.color } : {}}
+                    >
+                      {opt.icon}
+                    </span>
+                    <span className={s.roleCardLabel}
+                      style={role === opt.value ? { color: opt.color } : {}}>
+                      {opt.label}
+                    </span>
+                    <span className={s.roleCardDesc}>{opt.desc}</span>
+                    {role === opt.value && (
+                      <span className={s.roleCardCheck} style={{ background: opt.color }}>✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {isLogin ? (
             <div className={s.forgotRow}>
               <Checkbox className={s.remember}>Remember me</Checkbox>
@@ -176,19 +226,13 @@ const AuthModal = ({ open, onClose, defaultMode = "login" }) => {
           )}
         </div>
 
-        {/* Submit */}
-        <button
-          className={s.submitBtn}
-          onClick={handleSubmit}
-          disabled={loading}
-        >
+        <button className={s.submitBtn} onClick={handleSubmit} disabled={loading}>
           {loading
             ? <><LoadingOutlined /> {isLogin ? "Signing in…" : "Creating account…"}</>
             : isLogin ? "Sign In" : "Create Account"
           }
         </button>
 
-        {/* Toggle */}
         <p className={s.toggle}>
           {isLogin ? "No account? " : "Already registered? "}
           <button className={s.toggleLink} onClick={() => switchMode(isLogin ? "register" : "login")}>

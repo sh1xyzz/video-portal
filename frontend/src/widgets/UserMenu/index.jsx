@@ -1,7 +1,4 @@
 // src/widgets/UserMenu/UserMenu.jsx
-// ✅ Bell dropdown — inline notifications list
-// ✅ Click notification → open full modal with title + body text
-// ✅ antd icons, CSS vars, both themes
 
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +7,7 @@ import {
   BellOutlined, ThunderboltFilled, FireFilled, ReadOutlined,
   DownOutlined, CheckOutlined, DeleteOutlined, CloseOutlined,
   BookFilled, TrophyFilled, CrownFilled, ArrowLeftOutlined,
+  ControlOutlined,
 } from "@ant-design/icons";
 import useAuthStore   from "@/shared/store/useAuthStore";
 import useCoinsStore  from "@/shared/store/useCoinsStore";
@@ -34,13 +32,12 @@ const NOTIF_BG = {
   trophy: "rgba(245,158,11,.12)",
   system: "var(--surface-hover)",
 };
-// Full body text for the modal — more detail than the preview line
 const NOTIF_BODY = {
   1: "You received +10 ⚡ EduCoins as your daily login bonus. Come back every day to keep your streak alive and earn even more coins!",
-  2: "The brand-new course \"Machine Learning Pro\" is now live on EduStream. Dive deep into neural networks, transformers, and real-world ML projects. Enroll now and get an early-bird bonus of 50 ⚡.",
+  2: "The brand-new course \"Machine Learning Pro\" is now live on EduStream. Dive deep into neural networks, transformers, and real-world ML projects.",
   3: "Amazing! You've logged in 3 days in a row and unlocked the 3-day streak badge. Keep it going — at 7 days you'll earn a special reward.",
-  4: "🎉 Achievement unlocked: First Lesson Complete! You finished your very first lesson on EduStream. This is just the beginning — many more achievements await you.",
-  5: "Welcome to EduStream! Your account is fully set up and ready to go. Browse our course catalog, enroll in something you love, and start earning EduCoins today.",
+  4: "🎉 Achievement unlocked: First Lesson Complete! You finished your very first lesson on EduStream.",
+  5: "Welcome to EduStream! Your account is fully set up and ready to go. Browse our course catalog and start earning EduCoins today.",
 };
 
 const INIT_NOTIFS = [
@@ -53,7 +50,6 @@ const INIT_NOTIFS = [
 
 /* ─── Notification Modal ──────────────────────────────────────────────────── */
 const NotifModal = ({ notif, onClose, onDelete }) => {
-  // close on Escape
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", h);
@@ -63,8 +59,6 @@ const NotifModal = ({ notif, onClose, onDelete }) => {
   return (
     <div className={s.modalBackdrop} onClick={onClose}>
       <div className={s.modal} onClick={e => e.stopPropagation()}>
-
-        {/* top bar */}
         <div className={s.modalTop}>
           <button className={s.modalBack} onClick={onClose}>
             <ArrowLeftOutlined style={{ fontSize:12 }}/> Back
@@ -73,8 +67,6 @@ const NotifModal = ({ notif, onClose, onDelete }) => {
             <CloseOutlined style={{ fontSize:12 }}/>
           </button>
         </div>
-
-        {/* icon + type badge */}
         <div className={s.modalHeader}>
           <div className={s.modalIcoWrap} style={{ background: NOTIF_BG[notif.type] }}>
             {NOTIF_ICON[notif.type]}
@@ -84,17 +76,11 @@ const NotifModal = ({ notif, onClose, onDelete }) => {
             <span className={s.modalTime}>{notif.time}</span>
           </div>
         </div>
-
-        {/* content */}
         <h3 className={s.modalTitle}>{notif.title}</h3>
         <p  className={s.modalBody}>{NOTIF_BODY[notif.id] || notif.text}</p>
-
-        {/* footer */}
         <div className={s.modalFoot}>
-          <button
-            className={s.modalDeleteBtn}
-            onClick={() => { onDelete(notif.id); onClose(); }}
-          >
+          <button className={s.modalDeleteBtn}
+            onClick={() => { onDelete(notif.id); onClose(); }}>
             <DeleteOutlined/> Delete notification
           </button>
         </div>
@@ -105,44 +91,39 @@ const NotifModal = ({ notif, onClose, onDelete }) => {
 
 /* ─── Notification Bell ───────────────────────────────────────────────────── */
 export const NotificationBell = () => {
-  const [open,       setOpen]       = useState(false);
-  const [notifs,     setNotifs]     = useState(INIT_NOTIFS);
-  const [openNotif,  setOpenNotif]  = useState(null); // notif to show in modal
-  const ref   = useRef(null);
+  const [open,      setOpen]      = useState(false);
+  const [notifs,    setNotifs]    = useState(INIT_NOTIFS);
+  const [openNotif, setOpenNotif] = useState(null);
+  const ref    = useRef(null);
   const unread = notifs.filter(n => n.unread).length;
 
-  // close dropdown on outside click
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  const markRead    = (id)    => setNotifs(p => p.map(n => n.id===id ? {...n, unread:false} : n));
-  const markAll     = ()      => setNotifs(p => p.map(n => ({...n, unread:false})));
-  const deleteNotif = (id)    => setNotifs(p => p.filter(n => n.id!==id));
-  const deleteStop  = (e, id) => { e.stopPropagation(); deleteNotif(id); };
+  const markRead    = (id) => setNotifs(p => p.map(n => n.id===id ? {...n, unread:false} : n));
+  const markAll     = ()   => setNotifs(p => p.map(n => ({...n, unread:false})));
+  const deleteNotif = (id) => setNotifs(p => p.filter(n => n.id!==id));
 
   const openModal = (notif) => {
     markRead(notif.id);
     setOpenNotif(notif);
-    setOpen(false); // close dropdown when modal opens
+    setOpen(false);
   };
 
   return (
     <>
       <div className={s.bellWrap} ref={ref}>
-        <button
-          className={`${s.bellBtn} ${open ? s.bellOpen : ""}`}
-          onClick={() => setOpen(v => !v)}
-        >
+        <button className={`${s.bellBtn} ${open ? s.bellOpen : ""}`}
+          onClick={() => setOpen(v => !v)}>
           <BellOutlined />
           {unread > 0 && <span className={s.bellBadge}>{unread}</span>}
         </button>
 
         {open && (
           <div className={s.bellDrop}>
-            {/* header */}
             <div className={s.bellHead}>
               <span className={s.bellTitle}>Notifications</span>
               {unread > 0 && (
@@ -151,8 +132,6 @@ export const NotificationBell = () => {
                 </button>
               )}
             </div>
-
-            {/* list */}
             <div className={s.bellList}>
               {notifs.length === 0 ? (
                 <div className={s.bellEmpty}>
@@ -160,12 +139,9 @@ export const NotificationBell = () => {
                   <span>All caught up!</span>
                 </div>
               ) : notifs.map(n => (
-                <div
-                  key={n.id}
+                <div key={n.id}
                   className={`${s.bellItem} ${n.unread ? s.bellUnread : ""}`}
-                  onClick={() => openModal(n)}
-                  title="Click to open"
-                >
+                  onClick={() => openModal(n)}>
                   <div className={s.bellIcoWrap} style={{ background: NOTIF_BG[n.type] }}>
                     {NOTIF_ICON[n.type]}
                   </div>
@@ -175,18 +151,13 @@ export const NotificationBell = () => {
                     <span className={s.bellItemTime}>{n.time}</span>
                   </div>
                   {n.unread && <span className={s.unreadDot} />}
-                  <button
-                    className={s.bellDelete}
-                    onClick={(e) => deleteStop(e, n.id)}
-                    title="Delete"
-                  >
+                  <button className={s.bellDelete}
+                    onClick={e => { e.stopPropagation(); deleteNotif(n.id); }}>
                     <DeleteOutlined />
                   </button>
                 </div>
               ))}
             </div>
-
-            {/* footer */}
             {notifs.length > 0 && (
               <div className={s.bellFoot}>
                 <button className={s.bellClearAll} onClick={() => setNotifs([])}>
@@ -198,13 +169,10 @@ export const NotificationBell = () => {
         )}
       </div>
 
-      {/* notification modal — rendered outside dropdown */}
       {openNotif && (
-        <NotifModal
-          notif={openNotif}
+        <NotifModal notif={openNotif}
           onClose={() => setOpenNotif(null)}
-          onDelete={deleteNotif}
-        />
+          onDelete={deleteNotif} />
       )}
     </>
   );
@@ -212,13 +180,16 @@ export const NotificationBell = () => {
 
 /* ─── UserMenu ────────────────────────────────────────────────────────────── */
 const UserMenu = () => {
-  const [open, setOpen]  = useState(false);
-  const ref              = useRef(null);
-  const navigate         = useNavigate();
+  const [open, setOpen] = useState(false);
+  const ref             = useRef(null);
+  const navigate        = useNavigate();
   const { user, logout } = useAuthStore();
   const { balance, currentStreak, dailyClaimed } = useCoinsStore();
-  const { getList }      = useEnrollStore();
-  const enrolledCount    = getList().length;
+  const { getList }     = useEnrollStore();
+  const enrolledCount   = getList().length;
+
+  const isAdmin   = user?.role === "admin";
+  const isTeacher = user?.role === "teacher" || user?.role === "admin";
 
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -235,7 +206,6 @@ const UserMenu = () => {
 
   return (
     <div className={s.wrap} ref={ref}>
-      {/* trigger */}
       <button
         className={`${s.trigger} ${open ? s.triggerOpen : ""}`}
         onClick={() => setOpen(v => !v)}
@@ -252,9 +222,9 @@ const UserMenu = () => {
         <DownOutlined className={`${s.trigChev} ${open ? s.trigChevOpen : ""}`}/>
       </button>
 
-      {/* dropdown */}
       {open && (
         <div className={s.drop}>
+          {/* Head */}
           <div className={s.dropHead}>
             <div className={s.dropAv} style={{ background:`linear-gradient(135deg,${color}cc,${color}55)` }}>
               {user.avatar
@@ -265,22 +235,42 @@ const UserMenu = () => {
               <span className={s.dropName}>{user.name}</span>
               <span className={s.dropEmail}>{user.email}</span>
             </div>
+            {/* Role badge */}
+            {(isAdmin || isTeacher) && (
+              <span className={s.roleBadge} style={{
+                background: isAdmin ? "rgba(239,68,68,.12)" : "rgba(108,99,255,.12)",
+                color:      isAdmin ? "#f87171" : "#a89eff",
+                border:     isAdmin ? "1px solid rgba(239,68,68,.2)" : "1px solid rgba(108,99,255,.2)",
+              }}>
+                {isAdmin ? "⚡ admin" : "🎓 teacher"}
+              </span>
+            )}
           </div>
 
+          {/* Stats */}
           <div className={s.statsRow}>
             <div className={s.stat}>
               <ThunderboltFilled style={{ color:"#6c63ff", fontSize:13 }}/>
-              <div><div className={s.statVal}>{balance.toLocaleString()}</div><div className={s.statLbl}>Coins</div></div>
+              <div>
+                <div className={s.statVal}>{balance.toLocaleString()}</div>
+                <div className={s.statLbl}>Coins</div>
+              </div>
             </div>
             <div className={s.statDiv}/>
             <div className={s.stat}>
               <FireFilled style={{ color:"#f97316", fontSize:13 }}/>
-              <div><div className={s.statVal}>{currentStreak}</div><div className={s.statLbl}>Streak</div></div>
+              <div>
+                <div className={s.statVal}>{currentStreak}</div>
+                <div className={s.statLbl}>Streak</div>
+              </div>
             </div>
             <div className={s.statDiv}/>
             <div className={s.stat}>
               <ReadOutlined style={{ color:"#34d399", fontSize:13 }}/>
-              <div><div className={s.statVal}>{enrolledCount}</div><div className={s.statLbl}>Courses</div></div>
+              <div>
+                <div className={s.statVal}>{enrolledCount}</div>
+                <div className={s.statLbl}>Courses</div>
+              </div>
             </div>
           </div>
 
@@ -305,14 +295,21 @@ const UserMenu = () => {
             <button className={s.navBtn} onClick={() => go("/settings")}>
               <SettingOutlined className={s.navIco}/> Settings
             </button>
+
+            {/* Admin panel — только для admin */}
+            {isAdmin && (
+              <button className={`${s.navBtn} ${s.navBtnAdmin}`} onClick={() => go("/admin")}>
+                <ControlOutlined className={s.navIco}/>
+                <span>Admin panel</span>
+                <span className={s.navAdminBadge}>admin</span>
+              </button>
+            )}
           </div>
 
           <div className={s.sep}/>
 
-          <button
-            className={s.logoutBtn}
-            onClick={() => { setOpen(false); logout(); navigate("/"); }}
-          >
+          <button className={s.logoutBtn}
+            onClick={() => { setOpen(false); logout(); navigate("/"); }}>
             <LogoutOutlined className={s.navIco}/> Sign out
           </button>
         </div>
